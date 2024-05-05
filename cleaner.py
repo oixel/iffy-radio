@@ -35,8 +35,7 @@ print("------------------------------------------")
 
 # Deletes files in folders depending on choice input
 if choice == 1:
-    clear_at_folder("queue")
-    
+    clear_at_folder("queue") 
 elif choice == 2:
     clear_at_folder("qrcodes")
 else:
