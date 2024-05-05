@@ -2,31 +2,41 @@ import vlc
 import pytube
 from time import sleep
 
-# Test link
-# url = "https://www.youtube.com/watch?v=1RKqOmSkGgM"
+# Downloads song at given url
+def download_song(url, num):
+    # Downloads audio from url to queue folder
+    youtube = pytube.YouTube(url)
+    audio = youtube.streams.filter(only_audio=True).first()
 
-# # Downloads audio from url to queue
-# youtube = pytube.YouTube(url)
-# audio = youtube.streams.filter(only_audio=True).first()
+    # Stores song in format of song_# where # is its place in queue
+    audio.download("queue", "song_" + str(num) + ".mp3")
 
-# song_count = 1
-# audio.download("queue", "song_" + str(song_count) + ".mp3")
+# Takes plays song in queue depending which number is given
+def play_song(song_num):
+    # Plays song at given number in queue
+    player = vlc.MediaPlayer(f'queue/song_{song_num}.mp3')
+    player.play()
 
-# # Plays first song in queue
-# p = vlc.MediaPlayer(f'queue/song_1.mp3')
-# p.play()
+    # Gives vlc player time to open
+    sleep(5)
 
-# # Gives vlc player time to open
-# sleep(5)
+    # Prevents closing as long as vlc player is running
+    while player.is_playing():
+        sleep(1)
 
-# # Prevents closing as long as vlc player is running
-# while p.is_playing():
-#     sleep(1)
-
-#
+# Takes data stored in QR Code from main and runs the command stored on it
 def play(command):
+    # Returns error if no QR Code was ever provided but loop closes
     if command == None:
         print("No QR Code Provided")
         return
 
-    print(command + "should be played")
+    properties = command.split(" :: ")
+    
+    # If only a single song is in QR Code, only play that one song
+    if properties[0] == "song":
+        download_song(properties[1], 1)
+        play_song(1)
+    # Otherwise download and play every song
+    elif properties[0] == "playlist":
+        print("WIP PLAYLIST FEATURE")
