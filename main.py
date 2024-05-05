@@ -1,8 +1,10 @@
 import cv2
 import player
 
+# Uses camera to capture current video
 capture = cv2.VideoCapture(0)
 
+# Used to detect whether a QR Code is in camera
 detector = cv2.QRCodeDetector()
 
 while True:
@@ -16,13 +18,14 @@ while True:
     if data:
         command = data
         break
-    
-    # Renders camera
-    cv2.imshow("QRCodeScanner", image)
 
     # Closes loop if q is pressed
     if cv2.waitKey(1) == ord("q"):
         command = None
         break
 
+# Stops scanning functionality and turns off camera
+capture.release()
+
+# Runs command on QR Code
 player.play(command)
