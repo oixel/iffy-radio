@@ -1,4 +1,5 @@
 import cv2
+import cleaner
 import player
 
 # Uses camera to capture current video
@@ -26,6 +27,9 @@ while True:
 
 # Stops scanning functionality and turns off camera
 capture.release()
+
+# Wipes queue before running new QR Code command
+cleaner.clear_at_folder("queue")
 
 # Runs command on QR Code
 player.play(command)
