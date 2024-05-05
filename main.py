@@ -20,11 +20,6 @@ while True:
         command = data
         break
 
-    # Closes loop if q is pressed
-    if cv2.waitKey(1) == ord("q"):
-        command = None
-        break
-
 # Stops scanning functionality and turns off camera
 capture.release()
 
