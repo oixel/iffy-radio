@@ -1,4 +1,5 @@
 import cv2
+import player
 
 capture = cv2.VideoCapture(0)
 
@@ -21,6 +22,7 @@ while True:
 
     # Closes loop if q is pressed
     if cv2.waitKey(1) == ord("q"):
+        command = None
         break
 
-print(data)
+player.play(command)
