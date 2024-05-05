@@ -20,9 +20,9 @@ def play_song(song_num):
     # Gives vlc player time to open
     sleep(5)
 
-    # Prevents closing as long as vlc player is running
+    # Prevents closing as long as vlc player is running and quit button is not pressed
     while player.is_playing():
-        sleep(1)
+        continue
 
 # Takes data stored in QR Code from main and runs the command stored on it
 def play(command):
@@ -39,4 +39,11 @@ def play(command):
         play_song(1)
     # Otherwise download and play every song
     elif properties[0] == "playlist":
-        print("WIP PLAYLIST FEATURE")
+        playlist = pytube.Playlist(properties[1])
+        num = 1
+        for song_url in playlist.video_urls:
+            download_song(song_url, num)
+            num += 1
+        
+        for i in range(1, 4):
+            play_song(i)
