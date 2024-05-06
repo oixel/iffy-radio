@@ -20,6 +20,9 @@ while True:
         command = data
         break
 
+# Prints console message for debugging purposes
+print("QR Code Scanned!")
+
 # Stops scanning functionality and turns off camera
 capture.release()
 
