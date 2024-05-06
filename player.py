@@ -42,14 +42,28 @@ def play_song(song_num):
     # Creates a new button to handle pausing songs
     pause_button = ControlButton(2)
 
+    #
+    skip_button = ControlButton(3)
+
     # Prevents closing as long as media being played has not reached the end
-    while player.get_state() != vlc.State.Ended:
+    while player.get_state() != vlc.State.Ended and player.get_state() != vlc.State.Stopped:
+        # Handles pausing functionality
         if pause_button.is_active() and not pause_button.is_pressed():
             pause_button.set_pressed(True)
             player.pause()
-    
+        
+        # Resets pause button when it is let go
         if not pause_button.is_active() and pause_button.is_pressed():
             pause_button.set_pressed(False)
+
+        # Handles skipping functionality
+        if skip_button.is_active() and not skip_button.is_pressed():
+            skip_button.set_pressed(True)
+            player.stop()
+        
+        # Resets skip button when it is let go
+        if not skip_button.is_active() and skip_button.is_pressed():
+            skip_button.set_pressed(False)
 
 # Takes data stored in QR Code from main and runs the command stored on it
 def play(command):
@@ -78,5 +92,8 @@ def play(command):
             download_song(song_url, num)
             num += 1
         
-        for i in range(1, 4):
+        for i in range(1, len(playlist.video_urls) + 1):
             play_song(i)
+        
+        # Debug message to show when playlist has finished playing
+        print("PLAYLIST DONE!")
