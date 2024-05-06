@@ -8,6 +8,9 @@ capture = cv2.VideoCapture(0)
 # Used to detect whether a QR Code is in camera
 detector = cv2.QRCodeDetector()
 
+# Console log to show successful start
+print("Scanning for QR Code...")
+
 while True:
     # Dumps unneeded return and then stores current image into variable
     _, image = capture.read()
