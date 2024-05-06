@@ -1,11 +1,33 @@
 import vlc
-import pytube
+from pytube import YouTube, Playlist
+from pytube.innertube import _default_clients
+from gpiozero import Button
 from time import sleep
+
+# Basic template for different control buttons
+class ControlButton:
+    # Uses gipiozero button class for basic functionality
+    def __init__(self, pin_number):
+        self.button = Button(pin_number)
+        self.pressed = False
+    
+    # Returns whether button is currently being pressed down
+    def is_active(self):
+        return self.button.is_active
+
+    # Pressed boolean prevents spam-toggling while holding down button
+    def is_pressed(self):
+        return self.pressed
+
+    # Sets state of pressed button's pressed boolean
+    def set_pressed(self, state):
+        self.pressed = state
+        
 
 # Downloads song at given url
 def download_song(url, num):
     # Downloads audio from url to queue folder
-    youtube = pytube.YouTube(url)
+    youtube = YouTube(url)
     audio = youtube.streams.filter(only_audio=True).first()
 
     # Stores song in format of song_# where # is its place in queue
@@ -17,15 +39,23 @@ def play_song(song_num):
     player = vlc.MediaPlayer(f'queue/song_{song_num}.mp3')
     player.play()
 
-    # Gives vlc player time to open
-    sleep(5)
+    # Creates a new button to handle pausing songs
+    pause_button = ControlButton(2)
 
-    # Prevents closing as long as vlc player is running and quit button is not pressed
-    while player.is_playing():
-        continue
+    # Prevents closing as long as media being played has not reached the end
+    while player.get_state() != vlc.State.Ended:
+        if pause_button.is_active() and not pause_button.is_pressed():
+            pause_button.set_pressed(True)
+            player.pause()
+    
+        if not pause_button.is_active() and pause_button.is_pressed():
+            pause_button.set_pressed(False)
 
 # Takes data stored in QR Code from main and runs the command stored on it
 def play(command):
+    # Used to bypass age restricted authorization
+    _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
+
     # Returns error if no QR Code was ever provided but loop closes
     if command == None:
         print("No QR Code Provided")
@@ -37,9 +67,12 @@ def play(command):
     if properties[0] == "song":
         download_song(properties[1], 1)
         play_song(1)
+
+        # Debug message to show when song has finished playing
+        print("SONG DONE!")
     # Otherwise download and play every song
     elif properties[0] == "playlist":
-        playlist = pytube.Playlist(properties[1])
+        playlist = Playlist(properties[1])
         num = 1
         for song_url in playlist.video_urls:
             download_song(song_url, num)
