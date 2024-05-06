@@ -1,8 +1,8 @@
 #Follow these steps to properly set up dependencies on raspberry pi:
 
-sudo apt install code
-install python in vs code
-sudo apt install pip
-pip install opencv-python --break-system-
-pip install python-vlc --break-system-
-pip install pytube --break-system-
+1. Run "sudo apt install code" in CMD
+2. Install python extension in VS Code
+3. Run "sudo apt install pip" in CMD
+4. Run "pip install opencv-python --break-system-" in CMD
+5. Run "pip install python-vlc --break-system-" in CMD
+6. Run "pip install pytube --break-system-" in CMD
