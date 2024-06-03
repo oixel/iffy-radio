@@ -42,7 +42,7 @@ def play_song(song_num):
     # Creates a new button to handle pausing songs
     pause_button = ControlButton(2)
 
-    #
+    # Creates a new button handle skipping songs
     skip_button = ControlButton(3)
 
     # Prevents closing as long as media being played has not reached the end
