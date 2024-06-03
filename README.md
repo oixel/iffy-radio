@@ -1,4 +1,4 @@
-#Follow these steps to properly set up dependencies on raspberry pi:
+# Follow these steps to properly set up dependencies on raspberry pi:
 
 1. Run "sudo apt install code" in CMD
 2. Install python extension in VS Code
