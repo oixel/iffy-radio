@@ -1,6 +1,7 @@
 import cv2
 import cleaner
-import player
+import laptop_player as player
+#import player
 
 # Uses camera to capture current video
 capture = cv2.VideoCapture(0)
@@ -11,7 +12,11 @@ detector = cv2.QRCodeDetector()
 # Console log to show successful start
 print("Scanning for QR Code...")
 
-while True:
+# Boolean for overwriting camera usage for faster testing
+use_camera = False
+
+# Runs camera when boolean is turned to true
+while use_camera:
     # Dumps unneeded return and then stores current image into variable
     _, image = capture.read()
 
@@ -22,6 +27,12 @@ while True:
     if data:
         command = data
         break
+
+# Overwrites camera usage for quicker debugging; Reads directly from debug qrcode folder
+if not use_camera:
+    image = cv2.imread('qrcodes/PlaylistTest.png')
+    data, _, _ = detector.detectAndDecode(image)
+    command = data
 
 # Prints console message for debugging purposes
 print("QR Code Scanned!")
