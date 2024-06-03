@@ -6,10 +6,29 @@ import os
 os.add_dll_directory(r'C:\Program Files\VideoLAN\VLC')
 
 import vlc
-import keyboard
 from pytube import YouTube, Playlist
 from pytube.innertube import _default_clients
+import keyboard
 from time import sleep
+
+# Basic template for different control buttons
+class ControlButton:
+    # Uses gipiozero button class for basic functionality
+    def __init__(self, key):
+        self.key = key
+        self.pressed = False
+    
+    # Returns whether key is currently being pressed down
+    def is_active(self):
+        return keyboard.is_pressed(self.key)
+
+    # Pressed boolean prevents spam-toggling while holding down button
+    def is_pressed(self):
+        return self.pressed
+
+    # Sets state of pressed button's pressed boolean
+    def set_pressed(self, state):
+        self.pressed = state
         
 
 # Downloads song at given url
@@ -26,19 +45,33 @@ def play_song(song_num):
     # Plays song at given number in queue
     player = vlc.MediaPlayer(f'queue/song_{song_num}.mp3')
     player.play()
-    
+
+    # Creates a new button to handle pausing songs
+    pause_button = ControlButton('p')
+
+    # Creates a new button to handle skipping songs
+    skip_button = ControlButton('s')
+
     # Prevents closing as long as media being played has not reached the end
     while player.get_state() != vlc.State.Ended and player.get_state() != vlc.State.Stopped:
-        pause_pressed = keyboard.is_pressed("p")
-        skip_pressed = keyboard.is_pressed("s")
-        
         # Handles pausing functionality
-        if pause_pressed:
+        if pause_button.is_active() and not pause_button.is_pressed():
+            pause_button.set_pressed(True)
             player.pause()
+        
+        # Resets pause button when it is let go
+        if not pause_button.is_active() and pause_button.is_pressed():
+            pause_button.set_pressed(False)
 
         # Handles skipping functionality
-        if skip_pressed:
+        if skip_button.is_active() and not skip_button.is_pressed():
+            skip_button.set_pressed(True)
+            print("SONG SKIPPED")
             player.stop()
+        
+        # Resets skip button when it is let go
+        if not skip_button.is_active() and skip_button.is_pressed():
+            skip_button.set_pressed(False)
 
 # Takes data stored in QR Code from main and runs the command stored on it
 def play(command):
