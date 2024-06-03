@@ -2,6 +2,7 @@
 # This is for testing the player on my laptop compared to the actual Raspberry Pi
 #
 
+# Prevents error with importing vlc
 import os
 os.add_dll_directory(r'C:\Program Files\VideoLAN\VLC')
 
@@ -34,6 +35,10 @@ class ControlButton:
     def set_pressed(self, state):
         self.pressed = state
         
+# Creates buttons to handle different playback functionalities
+pause_button = ControlButton('p')
+skip_button = ControlButton('s')
+back_button = ControlButton('b')
 
 # Downloads song at given url
 def download_song(url, num):
@@ -44,20 +49,12 @@ def download_song(url, num):
     # Stores song in format of song_# where # is its place in queue
     audio.download("queue", "song_" + str(num) + ".mp3")
 
+
 # Takes plays song in queue depending which number is given
 def play_song(song_num):
     # Plays song at given number in queue
     player = vlc.MediaPlayer(f'queue/song_{song_num}.mp3')
     player.play()
-
-    # Creates a new button to handle pausing songs
-    pause_button = ControlButton('p')
-
-    # Creates a new button to handle skipping songs
-    skip_button = ControlButton('s')
-
-    # Prevents infinite skipping by holding down skip
-    song_just_skipped = True
 
     # Prevents closing as long as media being played has not reached the end
     while player.get_state() != vlc.State.Ended and player.get_state() != vlc.State.Stopped:
@@ -71,21 +68,32 @@ def play_song(song_num):
             pause_button.set_pressed(False)
 
         # Handles skipping functionality
-        if skip_button.is_active() and not skip_button.is_pressed() and not song_just_skipped:
+        if skip_button.is_active() and not skip_button.is_pressed():
             skip_button.set_pressed(True)
-            print("SONG SKIPPED")
             player.stop()
-        
-        # Removes infinite skip blocker when the skip key is released
-        if skip_button.is_released() and song_just_skipped:
-            song_just_skipped = False
+            return song_num + 1
         
         # Resets skip button when it is let go
         if not skip_button.is_active() and skip_button.is_pressed():
             skip_button.set_pressed(False)
+        
+        # Handles going back functionality
+        if back_button.is_active() and not back_button.is_pressed():
+            back_button.set_pressed(True)
+            player.stop()
+            return song_num - 1
+        
+        # Resets back button when it is let go
+        if not back_button.is_active() and back_button.is_pressed():
+            back_button.set_pressed(False)
+    
+    # Automatically moves onto next song once the current song has ended
+    return song_num + 1
 
 # Takes data stored in QR Code from main and runs the command stored on it
 def play(command):
+    song_num = 1
+
     # Used to bypass age restricted authorization
     _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 
@@ -105,14 +113,19 @@ def play(command):
         print("SONG DONE!")
     # Otherwise download and play every song
     elif properties[0] == "playlist":
+        # Creates list of songs from playlist object
         playlist = Playlist(properties[1])
+
+        # Downloads all songs in imported playlist
         num = 1
         for song_url in playlist.video_urls:
             download_song(song_url, num)
             num += 1
         
-        for i in range(1, len(playlist.video_urls) + 1):
-            play_song(i)
+        # Runs as long as the song being played is in range of queue
+        while song_num >= 1 and song_num < len(playlist.video_urls) + 1:
+            # the integer returned is an altered version o
+            song_num = play_song(song_num)
         
         # Debug message to show when playlist has finished playing
         print("PLAYLIST DONE!")
