@@ -25,6 +25,10 @@ class ControlButton:
     # Pressed boolean prevents spam-toggling while holding down button
     def is_pressed(self):
         return self.pressed
+    
+    # Returns true when the key is not being pressed down
+    def is_released(self):
+        return not keyboard.is_pressed(self.key)
 
     # Sets state of pressed button's pressed boolean
     def set_pressed(self, state):
@@ -52,6 +56,9 @@ def play_song(song_num):
     # Creates a new button to handle skipping songs
     skip_button = ControlButton('s')
 
+    # Prevents infinite skipping by holding down skip
+    song_just_skipped = True
+
     # Prevents closing as long as media being played has not reached the end
     while player.get_state() != vlc.State.Ended and player.get_state() != vlc.State.Stopped:
         # Handles pausing functionality
@@ -64,10 +71,14 @@ def play_song(song_num):
             pause_button.set_pressed(False)
 
         # Handles skipping functionality
-        if skip_button.is_active() and not skip_button.is_pressed():
+        if skip_button.is_active() and not skip_button.is_pressed() and not song_just_skipped:
             skip_button.set_pressed(True)
             print("SONG SKIPPED")
             player.stop()
+        
+        # Removes infinite skip blocker when the skip key is released
+        if skip_button.is_released() and song_just_skipped:
+            song_just_skipped = False
         
         # Resets skip button when it is let go
         if not skip_button.is_active() and skip_button.is_pressed():
