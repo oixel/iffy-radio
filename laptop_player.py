@@ -10,7 +10,6 @@ import vlc
 from pytube import YouTube, Playlist
 from pytube.innertube import _default_clients
 import keyboard
-from time import sleep
 
 # Basic template for different control buttons
 class ControlButton:
