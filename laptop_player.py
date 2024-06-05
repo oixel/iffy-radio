@@ -115,15 +115,19 @@ def play(command):
         # Creates list of songs from playlist object
         playlist = Playlist(properties[1])
 
-        # Downloads all songs in imported playlist
+        # Makes a queue of the first five songs (or less if there are < 5 songs in playlist)
+        MAX_QUEUE_SIZE = len(playlist) if len(playlist) < 5 else 5
+        current_queue = playlist[0:MAX_QUEUE_SIZE]
+
+        # Downloads all songs in current queue
         num = 1
-        for song_url in playlist.video_urls:
+        for song_url in current_queue:
             download_song(song_url, num)
             num += 1
         
         # Runs as long as the song being played is in range of queue
         while song_num >= 1 and song_num < len(playlist.video_urls) + 1:
-            # the integer returned is an altered version o
+            # the integer returned is an altered version of the current song's index
             song_num = play_song(song_num)
         
         # Debug message to show when playlist has finished playing
