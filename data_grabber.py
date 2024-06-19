@@ -14,7 +14,7 @@ class DataGrabber:
 
         # Uses BeautifulSoup to parse through the HTML data and convert it to a "legible" string
         bs = BS(html, "html.parser")
-        self.html = bs.prettify()
+        self.html = bs.prettify()[800000:]
 
         # Creates an empty dictionary to fill with metadata
         self.metadata = {}
@@ -29,7 +29,7 @@ class DataGrabber:
         
         new_start = end if start != -1 else old_start
         
-        if not data:
+        if not data or end < 250:
             data = None
 
         return new_start, data
