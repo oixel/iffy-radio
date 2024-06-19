@@ -12,11 +12,7 @@ MARKER = '{"image":{"sources":[{"url":"'
 
 if MARKER in html:
     start = html.find(MARKER) + len(MARKER)
-    end = start
-    for i in range(start, len(html)):
-        if html[i] == '"':
-            end = i
-            break
+    end = html.find('"', start)
     src = html[start:end]
     print(src)
 else:
