@@ -1,10 +1,9 @@
 import requests
 from bs4 import BeautifulSoup as BS
-import album_grabber as AG
 
 class DataGrabber:
     # Each marker represents the HTML that comes right before each specific piece of metadata
-    COVER_MARKER = 'https://lh3'
+    COVER_MARKER = 'https://lh3.googleusercontent.com/'
     SONG_MARKER = '"imageStyle":"VIDEO_ATTRIBUTE_IMAGE_STYLE_SQUARE","title":"'
     ARTIST_MARKER = '","subtitle":"'
     ALBUM_MARKER = '"secondarySubtitle":{"content":"'
@@ -24,7 +23,8 @@ class DataGrabber:
         self.prev_end = 0
     
     # Takes marker and searches for it from the previous data's end character index to the end of the HTML
-    def find_data(self, marker, use_offset=True):
+    # Returns: new point to search for next marker from and found data
+    def find_data(self, marker, use_offset=True) -> tuple[int, str]:
         # Only turn off offset of marker's character count if specifically stated in function call
         offset = 0 if use_offset == False else len(marker)
 
@@ -44,8 +44,8 @@ class DataGrabber:
         # Returns the value of the new start and the metadata that was found (or not found)
         return new_start, data
 
-    #
-    def get_data(self):
+    # Gets all desired metadata from self's HTML
+    def get_data(self) -> dict:
         # Gets album cover's source
         self.prev_end, self.metadata["cover_src"] = self.find_data(self.COVER_MARKER, False)
 
