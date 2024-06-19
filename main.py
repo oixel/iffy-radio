@@ -9,5 +9,3 @@ playlist = Playlist(TEST_PLAYLIST_URL)
 for song_url in playlist.video_urls:
     dg = DG.DataGrabber(song_url)
     print(dg.get_data(),'\n')
-
-#TEST_SONG = YouTube()
