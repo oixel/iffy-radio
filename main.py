@@ -1,4 +1,5 @@
 import data_grabber as DG
+from downloader import *
 from pytube import *
 import webbrowser
 
@@ -8,4 +9,8 @@ playlist = Playlist(TEST_PLAYLIST_URL)
 
 for song_url in playlist.video_urls:
     dg = DG.DataGrabber(song_url)
-    print(dg.get_data(),'\n')
+    data = dg.get_data()
+    print(data, "\n")
+    if data["cover_src"] != None:
+        path = f'album_art/{data["song"]}.jpg'
+        download_image(data["cover_src"], path)
