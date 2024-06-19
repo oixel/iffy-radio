@@ -12,5 +12,8 @@ for song_url in playlist.video_urls:
     data = dg.get_data()
     print(data, "\n")
     if data["cover_src"] != None:
-        path = f'album_art/{data["song"]}.jpg'
-        download_image(data["cover_src"], path)
+        spaceless_album = data["album"].replace(' ', '')
+        spaceless_name = data["song"].replace(' ', '')
+        path = f'album_art/{spaceless_name}.jpg'
+        download_cover(data["cover_src"], spaceless_album)
+        download_song(song_url, spaceless_name)
