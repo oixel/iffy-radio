@@ -11,6 +11,10 @@ from pytube import YouTube, Playlist
 from pytube.innertube import _default_clients
 import keyboard
 
+#
+# ALTERNATIVE PLAN: Utilize VLC MediaListPlayer and only worry about deleting songs in queue when it is really full
+#
+
 class Queue:
     def __init__(self, side_length, song_urls) -> None:
         self.SIDE_LENGTH = side_length  # Refers to how many songs are on each side of current song
