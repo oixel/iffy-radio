@@ -21,7 +21,9 @@ def get_album_cover(url):
         return source
     # Otherwise, the video does not have a proper album cover attached to it :(
     else:
-        return 'No album art available, grabbing thumbnail instead.'
+        print('No album art available, grabbing thumbnail instead.')
+        print("NEED TO IMPLEMENT THIS STILL ~ ♥")
+        return 'https://www.gstatic.com/youtube/img/watch/yt_music_channel.jpeg'
 
 # Allows the Album Grabber to be used as an independent tool.
 if __name__ == "__main__":
