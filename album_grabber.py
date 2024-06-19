@@ -1,19 +1,20 @@
-import urllib
-import urllib.request
+import requests
 from bs4 import BeautifulSoup as BS
 
-html = urllib.request.urlopen("https://www.youtube.com/watch?v=ws5K_5G_xvI").read()
+url = input("What is the youtube url? ")
+
+html = requests.get(url).content
 
 bs = BS(html, "html.parser")
 
 html = bs.prettify()
 
-MARKER = '{"image":{"sources":[{"url":"'
+MARKER = 'https://lh3'
 
 if MARKER in html:
-    start = html.find(MARKER) + len(MARKER)
+    start = html.find(MARKER)
     end = html.find('"', start)
     src = html[start:end]
     print(src)
 else:
-    print("No album art available, grabbing thumbnail instead")
+    print('No album art available, grabbing thumbnail instead.')
