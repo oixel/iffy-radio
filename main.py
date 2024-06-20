@@ -44,7 +44,7 @@ for song_url in playlist.video_urls:
         eyed3_mp3.tag.save(version=eyed3.id3.ID3_V2_4)
         
         # Write byte data that was embeded into another ID3 tag to read in GUI more easily
-        mp3.tags["COVER_DATA"] = image_bytes
+        #mp3.tags["COVER_DATA"] = image_bytes
         #print(mp3.tags)
 
 
