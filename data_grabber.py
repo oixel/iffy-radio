@@ -49,8 +49,8 @@ class DataGrabber:
         # Gets album cover's source
         self.prev_end, self.metadata["cover_src"] = self.find_data(self.COVER_MARKER, False)
 
-        # Gets song's name
-        self.prev_end, self.metadata["song"] = self.find_data(self.SONG_MARKER)
+        # Gets song's title
+        self.prev_end, self.metadata["title"] = self.find_data(self.SONG_MARKER)
 
         # Gets artist's name
         self.prev_end, self.metadata["artist"] = self.find_data(self.ARTIST_MARKER)
