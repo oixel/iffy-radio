@@ -27,12 +27,12 @@ for song_url in playlist.video_urls:
         #download_cover(data["cover_src"], spaceless_album)
         download_song(song_url, spaceless_name)
 
+        # Writes basic info into MP3's ID3 metadata
         with taglib.File(f"content/songs/{spaceless_name}.mp3", save_on_exit=True) as mp3:
             mp3.tags["TITLE"] = [data["title"]]
             mp3.tags["ALBUM"] = [data["album"]]
             mp3.tags["ARTIST"] = [data["artist"]]
             mp3.tags["COVER_SOURCE"] = [data["cover_src"]]
-        
 
         # Reads and store byte data for album cover image
         cont = requests.get(data["cover_src"]).content
@@ -42,6 +42,10 @@ for song_url in playlist.video_urls:
         eyed3_mp3 = eyed3.load(f"content/songs/{spaceless_name}.mp3")
         eyed3_mp3.tag.images.set(ImageFrame.FRONT_COVER, image_bytes, 'image/jpeg')
         eyed3_mp3.tag.save(version=eyed3.id3.ID3_V2_4)
+        
+        # Write byte data that was embeded into another ID3 tag to read in GUI more easily
+        mp3.tags["COVER_DATA"] = image_bytes
+
 
         print(data["title"], "downloaded and written!")
 
@@ -57,3 +61,14 @@ for song_url in playlist.video_urls:
 # https://stackoverflow.com/questions/57023015/convert-image-from-request-to-pygame-surface
 #
 # Yeah, just do that. Instead of downloading each album cover, just store the source of the cover onto it
+#
+#
+#
+# Here is how to read image data from song:
+# from PIL import Image
+# stream = BytesIO(mp3.tags["COVER_DATA"])
+#
+# image = Image.open(stream).convert("RGBA")
+# stream.close()
+# image.show()
+#
