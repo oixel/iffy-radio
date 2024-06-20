@@ -75,3 +75,4 @@ for song_url in playlist.video_urls:
 #
 #
 # Alternative to this is just using requests again and using mp3.tags["COVER_SOURCE"] to pull image data like i did in embedding
+# Honestly I think just reading that link and using requests would be so much cleaner than storing a giant block of bytes in text
