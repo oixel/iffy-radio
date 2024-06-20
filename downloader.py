@@ -10,7 +10,7 @@ def download_cover(url, song_name) -> None:
     open(path, "wb").write(image_data)
 
 # Downloads song at given url
-def download_song(url, song_name):
+def download_song(url, song_name) -> None:
     # Downloads audio from url to queue folder
     youtube = YouTube(url)
     audio = youtube.streams.filter(only_audio=True).first()
