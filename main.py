@@ -45,6 +45,7 @@ for song_url in playlist.video_urls:
         
         # Write byte data that was embeded into another ID3 tag to read in GUI more easily
         mp3.tags["COVER_DATA"] = image_bytes
+        #print(mp3.tags)
 
 
         print(data["title"], "downloaded and written!")
@@ -72,3 +73,5 @@ for song_url in playlist.video_urls:
 # stream.close()
 # image.show()
 #
+#
+# Alternative to this is just using requests again and using mp3.tags["COVER_SOURCE"] to pull image data like i did in embedding
