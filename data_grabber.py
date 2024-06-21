@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as BS
-from renamer import *
+from renamer import fix_ampersand
 
 class DataGrabber:
     # Used in checking whether found cover source is proper album cover art
@@ -50,10 +50,6 @@ class DataGrabber:
             new_start = self.prev_end
             data = None
 
-        # Renames all metadata except for cover_src to be cleaner and prevent file path bugs
-        if data != None and not is_cover_src:
-            data = rename(data)
-
         # Returns the value of the new start and the metadata that was found (or not found)
         return new_start, data
 
@@ -78,13 +74,17 @@ class DataGrabber:
     # Gets all desired metadata from self's HTML
     def get_data(self) -> dict:
         # Gets album cover's source
-        self.prev_end, self.metadata["cover_src"] = self.find_data(self.COVER_MARKER, True)
+        self.prev_end, self.metadata["cover_src"] = self.find_data(self.COVER_MARKER, is_cover_src=True)
         
         # Gets song's title
         self.prev_end, self.metadata["title"] = self.find_data(self.SONG_MARKER)
 
         # Gets artist's name
-        artist_marker = f'"{self.metadata}{self.ARTIST_MARKER}'
+        if self.metadata["title"] != None:
+            self.prev_end -= len(self.metadata["title"])
+            artist_marker = f'{self.metadata["title"]}{self.ARTIST_MARKER}'
+        else:
+            artist_marker = self.ARTIST_MARKER
         self.prev_end, self.metadata["artist"] = self.find_data(artist_marker)
 
         # Gets album's name
@@ -93,5 +93,13 @@ class DataGrabber:
         # Ensures that song does not leave with no information
         if None in self.metadata.values():
             self.set_filler()
+        
+        # Fixes weird glitch that reads ampersand as unicode by converting unicode to symbol
+        if self.metadata["title"] != None:
+            self.metadata["title"] = fix_ampersand(self.metadata["title"])
+        if self.metadata["artist"] != None:
+            self.metadata["artist"] = fix_ampersand(self.metadata["artist"])
+        if self.metadata["album"] != None:
+            self.metadata["album"] = fix_ampersand(self.metadata["album"])
 
         return self.metadata
