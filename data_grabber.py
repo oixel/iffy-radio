@@ -28,18 +28,24 @@ class DataGrabber:
         # Only turn off offset of marker's character count if specifically stated in function call
         offset = 0 if use_offset == False else len(marker)
 
-        # Start search at last data's end and add offset of character count of marker to make sure it searches past marker
-        start = self.html.find(marker, self.prev_end) + offset
-        end = self.html.find('"', start)  # " indicates the end of metadata value
-        data = self.html[start:end]
-        
-        # When there is a bug or metadata does not exist, ensure that new_start does not change and data is type None
-        if self.prev_end > start or not data:
+        try:
+            # Start search at last data's end and add offset of character count of marker to make sure it searches past marker
+            start = self.html.index(marker, self.prev_end) + offset
+            end = self.html.index('"', start)  # " indicates the end of metadata value
+            data = self.html[start:end]
+            
+            # Ensures that there is no indexing bug for a cover source that does not actually exists
+            if data != None:
+                if not use_offset and self.COVER_MARKER not in data:
+                    raise
+            
+            # Only gets called if no error was raised
+            new_start = end
+        except:
             new_start = self.prev_end
             data = None
-        else:
-            # Otherwise, leave data as what it is found to be and updata the new_start to be at the end of current data
-            new_start = end
+        
+        
     
         # Returns the value of the new start and the metadata that was found (or not found)
         return new_start, data
@@ -52,7 +58,7 @@ class DataGrabber:
         
         # If no song title is available, set title to YouTube video's title
         if self.metadata["title"] == None:
-            self.metadata["title"] = "YouTube Title!"
+            self.metadata["title"] = "YouTube Title"
 
         # If not artist name is available, set artist name to YouTube video's creator
         if self.metadata["artist"] == None:
@@ -66,7 +72,7 @@ class DataGrabber:
     def get_data(self) -> dict:
         # Gets album cover's source
         self.prev_end, self.metadata["cover_src"] = self.find_data(self.COVER_MARKER, False)
-
+        
         # Gets song's title
         self.prev_end, self.metadata["title"] = self.find_data(self.SONG_MARKER)
         #
