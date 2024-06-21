@@ -5,29 +5,27 @@ import taglib
 import eyed3
 from io import BytesIO
 from eyed3.id3.frames import ImageFrame
+from renamer import *
 
-TEST_PLAYLIST_URL = 'https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa'
+TEST_PLAYLIST_URL = 'https://www.youtube.com/watch?v=mB3ImSuqj64&list=PLpqORVIE0FYRZ8aPel-yVdZ6zAMI6ePTL'
 
 playlist = Playlist(TEST_PLAYLIST_URL)
-
-# Shows that MP3 properly stores cover source!
-# mp3 = taglib.File(f"content/songs/Slug.mp3", save_on_exit=True)
-# print(mp3.tags["COVER"])
 
 for song_url in playlist.video_urls:
     dg = DG.DataGrabber(song_url)
     data = dg.get_data()
+    file_name = rename(data["title"])
 
     # print(data, "\n")
     if data["cover_src"] != None:
-        print(f"Downloading...{data["title"]}")
+        print(f"Downloading...{file_name}")
 
         # Download cover becomes obsolete if I just render the album cover directly from the internet
-        #download_cover(data["cover_src"], data["album"])
-        download_song(song_url, data["title"])
+        # download_cover(data["cover_src"], data["album"])
+        download_song(song_url, file_name)
 
         # Writes basic info into MP3's ID3 metadata
-        with taglib.File(f"content/songs/{data["title"]}.mp3", save_on_exit=True) as mp3:
+        with taglib.File(f"content/songs/{file_name}.mp3", save_on_exit=True) as mp3:
             mp3.tags["TITLE"] = [data["title"]]
             mp3.tags["ALBUM"] = [data["album"]]
             mp3.tags["ARTIST"] = [data["artist"]]
@@ -37,17 +35,17 @@ for song_url in playlist.video_urls:
         cont = requests.get(data["cover_src"]).content
         image_bytes = BytesIO(cont).read()
 
-        # Writes image data to mp3 file and saves it
-        eyed3_mp3 = eyed3.load(f"content/songs/{data["title"]}.mp3")
-        eyed3_mp3.tag.images.set(ImageFrame.FRONT_COVER, image_bytes, 'image/jpeg')
-        eyed3_mp3.tag.save(version=eyed3.id3.ID3_V2_4)
+        # Writes image data to mp3 file and saves it if file can be read by eyed3
+        eyed3_mp3 = eyed3.load(f"content/songs/{file_name}.mp3")
+        if eyed3_mp3 != None:
+            eyed3_mp3.tag.images.set(ImageFrame.FRONT_COVER, image_bytes, 'image/jpeg')
+            eyed3_mp3.tag.save(version=eyed3.id3.ID3_V2_4)
         
         # Write byte data that was embeded into another ID3 tag to read in GUI more easily
         #mp3.tags["COVER_DATA"] = image_bytes
         #print(mp3.tags)
 
-
-        print(data["title"], "downloaded and written!")
+        print(file_name, "downloaded and written!\n")
 
 # Possible Reference for embedding album art:
 # https://stackoverflow.com/questions/50437358/c-sharp-taglib-set-album-cover-for-mp3
