@@ -20,16 +20,14 @@ for song_url in playlist.video_urls:
 
     # print(data, "\n")
     if data["cover_src"] != None:
-        spaceless_album = data["album"].replace(' ', '').replace('/', '-').replace("\u0026", "&")
         print(f"Downloading...{data["title"]}")
-        spaceless_name = data["title"].replace(' ', '').replace('(', '').replace(')', '').replace('/', '-').replace("\\", "").replace("u0026", "&")
 
         # Download cover becomes obsolete if I just render the album cover directly from the internet
-        #download_cover(data["cover_src"], spaceless_album)
-        download_song(song_url, spaceless_name)
+        #download_cover(data["cover_src"], data["album"])
+        download_song(song_url, data["title"])
 
         # Writes basic info into MP3's ID3 metadata
-        with taglib.File(f"content/songs/{spaceless_name}.mp3", save_on_exit=True) as mp3:
+        with taglib.File(f"content/songs/{data["title"]}.mp3", save_on_exit=True) as mp3:
             mp3.tags["TITLE"] = [data["title"]]
             mp3.tags["ALBUM"] = [data["album"]]
             mp3.tags["ARTIST"] = [data["artist"]]
@@ -40,7 +38,7 @@ for song_url in playlist.video_urls:
         image_bytes = BytesIO(cont).read()
 
         # Writes image data to mp3 file and saves it
-        eyed3_mp3 = eyed3.load(f"content/songs/{spaceless_name}.mp3")
+        eyed3_mp3 = eyed3.load(f"content/songs/{data["title"]}.mp3")
         eyed3_mp3.tag.images.set(ImageFrame.FRONT_COVER, image_bytes, 'image/jpeg')
         eyed3_mp3.tag.save(version=eyed3.id3.ID3_V2_4)
         
