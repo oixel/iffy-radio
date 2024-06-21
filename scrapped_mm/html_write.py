@@ -2,8 +2,12 @@ import urllib
 import urllib.request
 from bs4 import BeautifulSoup as BS
 
-print("START\n\n\n")
-html = urllib.request.urlopen("https://www.youtube.com/watch?v=Dd7FixvoKBw&list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa&index=2").read()
+print("\n\n\n")
+
+# Test input Westcoast Collective: https://www.youtube.com/watch?v=vcZAjGbXEiE&list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa&index=6
+html_input = input("What YouTube Link? ")
+
+html = urllib.request.urlopen(html_input).read()
 
 soup = BS(html, "html.parser")
 
