@@ -1,6 +1,6 @@
 import requests
-from pytube import *
-from pytube.innertube import _default_clients
+from pytubefix import YouTube
+#from pytube.innertube import _default_clients
 
 # Takes in image source URL and downloads it at parameterized path
 def download_cover(url, song_name) -> None:
@@ -12,12 +12,8 @@ def download_cover(url, song_name) -> None:
 
 # Downloads song at given url
 def download_song(url, song_name) -> None:
-    # Used to bypass age restricted authorization
-    _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
-
-    # Downloads audio from url to queue folder
+    # Downloads an MP3 of the YouTube video audio from url to content/songs folder
     youtube = YouTube(url)
-    audio = youtube.streams.filter(only_audio=True).first()
 
-    # Stores song in format of SongName.mp3 in songs folder
-    audio.download('content/songs/', f'{song_name}.mp3')
+    stream = youtube.streams.get_audio_only()
+    stream.download("content/songs/", f"{song_name}", mp3=True)

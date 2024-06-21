@@ -7,7 +7,7 @@ from io import BytesIO
 from eyed3.id3.frames import ImageFrame
 from renamer import *
 
-TEST_PLAYLIST_URL = 'https://www.youtube.com/watch?v=mB3ImSuqj64&list=PLpqORVIE0FYRZ8aPel-yVdZ6zAMI6ePTL'
+TEST_PLAYLIST_URL = "https://www.youtube.com/watch?v=xVsa7whnDfU&list=PLpqORVIE0FYRZ8aPel-yVdZ6zAMI6ePTL"
 
 playlist = Playlist(TEST_PLAYLIST_URL)
 
@@ -38,7 +38,7 @@ for song_url in playlist.video_urls:
         # Writes image data to mp3 file and saves it if file can be read by eyed3
         eyed3_mp3 = eyed3.load(f"content/songs/{file_name}.mp3")
         if eyed3_mp3 != None:
-            eyed3_mp3.tag.images.set(ImageFrame.FRONT_COVER, image_bytes, 'image/jpeg')
+            eyed3_mp3.tag.images.set(ImageFrame.FRONT_COVER, image_bytes, "image/jpeg")
             eyed3_mp3.tag.save(version=eyed3.id3.ID3_V2_4)
         
         # Write byte data that was embeded into another ID3 tag to read in GUI more easily
