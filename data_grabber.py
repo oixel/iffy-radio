@@ -1,9 +1,13 @@
 import requests
 from bs4 import BeautifulSoup as BS
+from renamer import *
 
 class DataGrabber:
+    # Used in checking whether found cover source is proper album cover art
+    COVER_LINK_START = 'https://lh3.googleusercontent.com/'
+
     # Each marker represents the HTML that comes right before each specific piece of metadata
-    COVER_MARKER = 'https://lh3.googleusercontent.com/'
+    COVER_MARKER = ',{"horizontalCardListRenderer":{"cards":[{"videoAttributeViewModel":{"image":{"sources":[{"url":"'
     SONG_MARKER = '"}]},"imageStyle":"VIDEO_ATTRIBUTE_IMAGE_STYLE_SQUARE","title":"'
     ARTIST_MARKER = '","subtitle":"'  # MAKE ARTIST MARKER INCLUDE TITLE
     ALBUM_MARKER = '"secondarySubtitle":{"content":"'
@@ -24,9 +28,9 @@ class DataGrabber:
     
     # Takes marker and searches for it from the previous data's end character index to the end of the HTML
     # Returns: new point to search for next marker from and found data
-    def find_data(self, marker, use_offset=True) -> tuple[int, str]:
-        # Only turn off offset of marker's character count if specifically stated in function call
-        offset = 0 if use_offset == False else len(marker)
+    def find_data(self, marker, is_cover_src = False) -> tuple[int, str]:
+        # Sets offset to make sure that weird HTML data is not included in metadata information
+        offset = len(marker)
 
         try:
             # Start search at last data's end and add offset of character count of marker to make sure it searches past marker
@@ -36,17 +40,20 @@ class DataGrabber:
             
             # Ensures that there is no indexing bug for a cover source that does not actually exists
             if data != None:
-                if not use_offset and self.COVER_MARKER not in data:
+                if is_cover_src and self.COVER_LINK_START not in data:
                     raise
             
             # Only gets called if no error was raised
             new_start = end
         except:
+            # If any error is raised, then found metadata is incorrect or non-existent
             new_start = self.prev_end
             data = None
-        
-        
-    
+
+        # Renames all metadata except for cover_src to be cleaner and prevent file path bugs
+        if data != None and not is_cover_src:
+            data = rename(data)
+
         # Returns the value of the new start and the metadata that was found (or not found)
         return new_start, data
 
@@ -71,19 +78,10 @@ class DataGrabber:
     # Gets all desired metadata from self's HTML
     def get_data(self) -> dict:
         # Gets album cover's source
-        self.prev_end, self.metadata["cover_src"] = self.find_data(self.COVER_MARKER, False)
+        self.prev_end, self.metadata["cover_src"] = self.find_data(self.COVER_MARKER, True)
         
         # Gets song's title
         self.prev_end, self.metadata["title"] = self.find_data(self.SONG_MARKER)
-        #
-        # CHANGE THIS WHEN I MAKE PROPER NAME CLEANER
-        #
-        if self.metadata["title"] != None:
-            if "u0026" in self.metadata["title"]:
-                self.metadata["title"] = self.metadata["title"].replace("\\", "").replace("u0026", "&")
-        #   
-        #
-        #
 
         # Gets artist's name
         artist_marker = f'"{self.metadata}{self.ARTIST_MARKER}'
