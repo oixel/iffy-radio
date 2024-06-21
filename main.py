@@ -20,8 +20,9 @@ for song_url in playlist.video_urls:
 
     # print(data, "\n")
     if data["cover_src"] != None:
-        spaceless_album = data["album"].replace(' ', '').replace('/', '-')
-        spaceless_name = data["title"].replace(' ', '').replace('(', '').replace(')', '').replace('/', '-')
+        spaceless_album = data["album"].replace(' ', '').replace('/', '-').replace("\u0026", "&")
+        print(f"Downloading...{data["title"]}")
+        spaceless_name = data["title"].replace(' ', '').replace('(', '').replace(')', '').replace('/', '-').replace("\\", "").replace("u0026", "&")
 
         # Download cover becomes obsolete if I just render the album cover directly from the internet
         #download_cover(data["cover_src"], spaceless_album)
