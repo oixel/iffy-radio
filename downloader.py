@@ -1,6 +1,5 @@
 import requests
 from pytubefix import YouTube
-#from pytube.innertube import _default_clients
 
 # Takes in image source URL and downloads it at parameterized path
 def download_cover(url, song_name) -> None:
@@ -13,7 +12,7 @@ def download_cover(url, song_name) -> None:
 # Downloads song at given url
 def download_song(url, song_name) -> None:
     # Downloads an MP3 of the YouTube video audio from url to content/songs folder
-    youtube = YouTube(url)
+    youtube = YouTube(url, use_oauth=True, allow_oauth_cache=True)
 
     stream = youtube.streams.get_audio_only()
     stream.download("content/songs/", f"{song_name}", mp3=True)

@@ -61,7 +61,9 @@ class DataGrabber:
         
         # If no song title is available, set title to YouTube video's title
         if self.metadata["title"] == None:
-            self.metadata["title"] = "YouTube Title"
+            import random
+            test = random.randint(0, 10000000)
+            self.metadata["title"] = "YouTube Title" + str(test)
 
         # If not artist name is available, set artist name to YouTube video's creator
         if self.metadata["artist"] == None:

@@ -11,7 +11,7 @@ html = urllib.request.urlopen(html_input).read()
 
 soup = BS(html, "html.parser")
 
-html = soup.prettify()[850000:]  #bs is your BeautifulSoup object
+html = soup.prettify()  #bs is your BeautifulSoup object
 
 with open("out.txt","w") as out:
     for i in range(0, len(html)):

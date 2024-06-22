@@ -7,7 +7,7 @@ def fix_ampersand(string) -> str:
 def rename(name) -> str:
     new_name = ""
 
-    ALLOWED_CHAR = "!?^&-,()[]*$@%#:;'\"+=_ "
+    ALLOWED_CHAR = "!&-,()$@%#:;'\"+=_ "
 
     name = fix_ampersand(name)
     
