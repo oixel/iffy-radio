@@ -10,9 +10,12 @@ from renamer import *
 #TEST_PLAYLIST_URL = "https://www.youtube.com/playlist?list=PLvsYXqtYjMYfQ4gz7lC3UKa2DNsnlIKRM"  # Suki Waterhouse
 #TEST_PLAYLIST_URL = "https://www.youtube.com/playlist?list=OLAK5uy_kq_gJdWJ9LUwgYzXMWeocvSyee4OqsvOQ"  # NFR
 #TEST_PLAYLIST_URL = "https://www.youtube.com/watch?v=1RKqOmSkGgM&list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"  # MM_Test
-TEST_PLAYLIST_URL = "https://www.youtube.com/watch?v=6S20mJvr4vs&list=PLRwfuN7siOr7p044Iw_7jfEhGPgfVdST-"  # IGOR
+#TEST_PLAYLIST_URL = "https://www.youtube.com/watch?v=6S20mJvr4vs&list=PLRwfuN7siOr7p044Iw_7jfEhGPgfVdST-"  # IGOR
+TEST_PLAYLIST_URL = "https://www.youtube.com/playlist?list=PLfiMjLyNWxebu5tK9xUbPKcVeVpOwc8QI"  # CMIYGL
 
 USE_TRACK_NUMBERS = True
+SET_COVER_SOURCE = True
+EMBED_COVER_ART = False
 track_num = 1
 
 playlist = Playlist(TEST_PLAYLIST_URL)
@@ -41,24 +44,24 @@ for song_url in playlist.video_urls:
         mp3.tags["TITLE"] = [data["title"]]
         mp3.tags["ALBUM"] = [data["album"]]
         mp3.tags["ARTIST"] = [data["artist"]]
-        mp3.tags["COVER_SOURCE"] = [data["cover_src"]]
+
+        # Optional tags   
         if USE_TRACK_NUMBERS:
             mp3.tags['TRACKNUMBER'] = [f"{track_num}"]
             track_num += 1
+        if SET_COVER_SOURCE:
+            mp3.tags["COVER_SOURCE"] = [data["cover_src"]]
 
-    # Reads and store byte data for album cover image
-    # cont = requests.get(data["cover_src"]).content
-    # image_bytes = BytesIO(cont).read()
+    if EMBED_COVER_ART:
+        # Reads and store byte data for album cover image
+        cont = requests.get(data["cover_src"]).content
+        image_bytes = BytesIO(cont).read()
 
-    # # Writes image data to mp3 file and saves it if file can be read by eyed3
-    # eyed3_mp3 = eyed3.load(f"content/songs/{file_name}.mp3")
-    # if eyed3_mp3 != None:
-    #     eyed3_mp3.tag.images.set(ImageFrame.FRONT_COVER, image_bytes, "image/jpeg")
-    #     eyed3_mp3.tag.save(version=eyed3.id3.ID3_V2_4)
-    
-    # Write byte data that was embeded into another ID3 tag to read in GUI more easily
-    #mp3.tags["COVER_DATA"] = image_bytes
-    #print(mp3.tags)
+        # Writes image data to mp3 file and saves it if file can be read by eyed3
+        eyed3_mp3 = eyed3.load(f"content/songs/{file_name}.mp3")
+        if eyed3_mp3 != None:
+            eyed3_mp3.tag.images.set(ImageFrame.FRONT_COVER, image_bytes, "image/jpeg")
+            eyed3_mp3.tag.save(version=eyed3.id3.ID3_V2_4)
 
     print(file_name, "downloaded and written!\n")
 
