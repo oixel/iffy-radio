@@ -5,7 +5,7 @@ from pytube import Playlist
 import pygame
 import requests
 import io
-from rfid_readerwriter import read_rfid
+#from rfid_readerwriter import read_rfid
 
 # Draws button with given text label at set offset and with set colors
 def draw_button(view, font, text='', x_offset=0, y_offset=0, button_width=80, button_height=35, label_color=(255, 255, 255), button_color = (0, 0, 0)):
@@ -43,8 +43,7 @@ def main() -> None:
     background = pygame.Surface(SCREEN_SIZE)
     background.fill(pygame.Color('#FFC0CB'))
     is_pink = True
-    screen.blit(background, (0, 0))
-
+    
     # Creates image surface from URL
     req = requests.get("https://i.ibb.co/DDKn0JH/starcat.jpg")
     image = io.BytesIO(req.content)
@@ -53,16 +52,20 @@ def main() -> None:
 
     # Renders newly loaded image at center of screen
     center_pos = (WIDTH / 2 - image.get_width() / 2, HEIGHT / 2 - image.get_height() / 2)
-    screen.blit(image, center_pos)
-
+    
     button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
 
-    text_surface, rect = pygame.font.Font(None, 24).render("Please Tap a Music Card!", (0, 0, 0))
-    screen.blit(text_surface, (40, 250))
+    text_surface = pygame.font.Font(None, 24).render("Please Tap a Music Card!", False, (0, 0, 0))
+    screen.blit(text_surface, (WIDTH / 2, HEIGHT / 2))
 
     # Updates screen once
     pygame.display.flip()
     data = read_rfid()
+
+    screen.blit(background, (0, 0))
+    screen.blit(image, center_pos)
+    text_surface = pygame.font.Font(None, 24).render(data, False, (0, 0, 0))
+    screen.blit(text_surface, (WIDTH / 2, HEIGHT / 2))
 
     is_running = True
     while is_running:
