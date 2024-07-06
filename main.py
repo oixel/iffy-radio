@@ -5,7 +5,7 @@ from pytube import Playlist
 import pygame
 import requests
 import io
-#from rfid_readerwriter import read_rfid
+from rfid_readerwriter import read_rfid
 
 # Draws button with given text label at set offset and with set colors
 def draw_button(view, font, text='', x_offset=0, y_offset=0, button_width=80, button_height=35, label_color=(255, 255, 255), button_color = (0, 0, 0)):
