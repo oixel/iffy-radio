@@ -2,8 +2,10 @@ import data_handler as DH
 from downloader import *
 from renamer import *
 from pytube import Playlist
-from rfid_readerwriter import read_rfid
+#from rfid_readerwriter import read_rfid
 import pygame
+import requests
+import io
 
 def main() -> None:
     # print("Please tap music card!")
@@ -18,6 +20,14 @@ def main() -> None:
     background.fill(pygame.Color('#FFC0CB'))
 
     is_running = True
+
+    req = requests.get("https://i.ibb.co/DDKn0JH/starcat.jpg")
+    image = io.BytesIO(req.content)
+    img = pygame.image.load(image).convert()
+    screen.blit(background, (0, 0))
+    screen.blit(img, (0, 0))
+
+    pygame.display.flip()
     
     while is_running:
         for event in pygame.event.get():
@@ -28,9 +38,8 @@ def main() -> None:
                     pygame.quit()
                     return
         
-        screen.blit(background, (0, 0))
 
-        pygame.display.update()
+    pygame.quit()
     
 
 if __name__ == "__main__":
