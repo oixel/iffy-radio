@@ -45,7 +45,7 @@ def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
     back_button = draw_button(screen, pygame.font.Font(None, 24), 'BACK')
     
     # Creates image surface from URL
-    req = requests.get(data)
+    req = requests.get("https://lh3.googleusercontent.com/_c4JMCiDeaC2RRfShXddOuIV_A7oCL4m1R6-YK-3TDlsYgNQTXwxV0f-TTJrsO1StMt07qW3O6XNPSNt")
     image = io.BytesIO(req.content)
     image = pygame.image.load(image).convert()
     image = pygame.transform.scale(image, (200, 200))
