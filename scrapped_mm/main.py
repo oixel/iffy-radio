@@ -1,5 +1,5 @@
 import cv2
-import cleaner
+import scrapped_mm.cleaner as cleaner
 import laptop_player as player
 #import player
 
