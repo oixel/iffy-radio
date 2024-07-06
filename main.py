@@ -31,15 +31,6 @@ def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
     screen.blit(background, (0, 0))
     is_pink = True
     
-    # Creates image surface from URL
-    req = requests.get("https://i.ibb.co/DDKn0JH/starcat.jpg")
-    image = io.BytesIO(req.content)
-    image = pygame.image.load(image).convert()
-    image = pygame.transform.scale(image, (200, 200))
-
-    # Renders newly loaded image at center of screen
-    center_pos = (WIDTH / 2 - image.get_width() / 2, HEIGHT / 2 - image.get_height() / 2)
-
     text_surface = pygame.font.Font(None, 24).render("Please Tap a Music Card!", False, (0, 0, 0))
     screen.blit(text_surface, (WIDTH / 2, HEIGHT / 2))
 
@@ -48,11 +39,22 @@ def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
     data = read_rfid()
 
     screen.blit(background, (0, 0))
-    screen.blit(image, center_pos)
     text_surface = pygame.font.Font(None, 24).render(data, False, (0, 0, 0))
     screen.blit(text_surface, (10, 10))
     button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
     back_button = draw_button(screen, pygame.font.Font(None, 24), 'BACK')
+    
+    # Creates image surface from URL
+    req = requests.get(data)
+    image = io.BytesIO(req.content)
+    image = pygame.image.load(image).convert()
+    image = pygame.transform.scale(image, (200, 200))
+
+    # Renders newly loaded image at center of screen
+    center_pos = (WIDTH / 2 - image.get_width() / 2, HEIGHT / 2 - image.get_height() / 2)
+
+    screen.blit(image, center_pos)
+    
     pygame.display.flip()
 
     is_running = True
