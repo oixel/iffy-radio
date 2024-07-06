@@ -52,8 +52,6 @@ def main() -> None:
 
     # Renders newly loaded image at center of screen
     center_pos = (WIDTH / 2 - image.get_width() / 2, HEIGHT / 2 - image.get_height() / 2)
-    
-    button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
 
     text_surface = pygame.font.Font(None, 24).render("Please Tap a Music Card!", False, (0, 0, 0))
     screen.blit(text_surface, (WIDTH / 2, HEIGHT / 2))
@@ -66,6 +64,8 @@ def main() -> None:
     screen.blit(image, center_pos)
     text_surface = pygame.font.Font(None, 24).render(data, False, (0, 0, 0))
     screen.blit(text_surface, (WIDTH / 2, HEIGHT / 2))
+    button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
+    pygame.display.flip()
 
     is_running = True
     while is_running:
