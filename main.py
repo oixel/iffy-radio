@@ -24,21 +24,7 @@ def draw_button(view, font, text='', x_offset=0, y_offset=0, button_width=80, bu
     # Return rectangle to check position
     return button
 
-def main() -> None:
-    # print("Please tap music card!")
-    # data = read_rfid()
-    # print(data)
-
-    SCREEN_SIZE = WIDTH, HEIGHT = 800, 480
-
-    # Creates a fullscreen window named "iffy radio"
-    pygame.init()
-    pygame.display.set_caption('iffy radio')
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-
-    # Hides cursor on start up
-    pygame.mouse.set_visible(False)
-
+def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
     # Creates a background and fills it with pink
     background = pygame.Surface(SCREEN_SIZE)
     background.fill(pygame.Color('#FFC0CB'))
@@ -66,6 +52,7 @@ def main() -> None:
     text_surface = pygame.font.Font(None, 24).render(data, False, (0, 0, 0))
     screen.blit(text_surface, (10, 10))
     button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
+    back_button = draw_button(screen, pygame.font.Font(None, 24), 'BACK')
     pygame.display.flip()
 
     is_running = True
@@ -76,7 +63,7 @@ def main() -> None:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
-                    return
+                    return False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if button.collidepoint(pygame.mouse.get_pos()):
                     if is_pink:
@@ -88,9 +75,32 @@ def main() -> None:
                     screen.blit(image, center_pos)
                     screen.blit(text_surface, (10, 10))
                     button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
+                    back_button = draw_button(screen, pygame.font.Font(None, 24), 'BACK')
                     pygame.display.flip()
 
                     is_pink = not is_pink
+                elif back_button.collidepoint(pygame.mouse.get_pos()):
+                    return True
+
+def main() -> None:
+    # print("Please tap music card!")
+    # data = read_rfid()
+    # print(data)
+
+    SCREEN_SIZE = WIDTH, HEIGHT = 800, 480
+
+    # Creates a fullscreen window named "iffy radio"
+    pygame.init()
+    pygame.display.set_caption('iffy radio')
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+    # Hides cursor on start up
+    pygame.mouse.set_visible(False)
+
+    while True:
+        desire = core(screen, SCREEN_SIZE, WIDTH, HEIGHT)
+        if desire == False:
+            break
 
     pygame.quit()
     
