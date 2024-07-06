@@ -8,27 +8,35 @@ import requests
 import io
 
 def main() -> None:
+    SCREEN_SIZE = WIDTH, HEIGHT = 800, 480
     # print("Please tap music card!")
     # data = read_rfid()
     # print(data)
 
+    # Creates a fullscreen window named "iffy radio"
     pygame.init()
-    pygame.display.set_caption('iffy Radio')
+    pygame.display.set_caption('iffy radio')
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-    background = pygame.Surface((800, 480))
+    # Creates a background and fills it with pink
+    background = pygame.Surface(SCREEN_SIZE)
     background.fill(pygame.Color('#FFC0CB'))
+    screen.blit(background, (0, 0))
 
-    is_running = True
-
+    # Creates image surface from URL
     req = requests.get("https://i.ibb.co/DDKn0JH/starcat.jpg")
     image = io.BytesIO(req.content)
-    img = pygame.image.load(image).convert()
-    screen.blit(background, (0, 0))
-    screen.blit(img, (0, 0))
+    image = pygame.image.load(image).convert()
+    image = pygame.transform.scale(image, (200, 200))
 
+    # Renders newly loaded image at center of screen
+    center_pos = (WIDTH / 2 - image.get_width() / 2, HEIGHT / 2 - image.get_height() / 2)
+    screen.blit(image, center_pos)
+
+    # Updates screen once
     pygame.display.flip()
     
+    is_running = True
     while is_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
