@@ -8,10 +8,10 @@ def write_rfid() -> None:
     writer = MFRC()
 
     try:
-        decoded_data = input("What is the new data? ")
+        data = input("What is the new data? ")
 
         print("Tap your RFID tag!")
-        data = zlib.compress(decoded_data.encode())
+        data = zlib.compress(data)
         writer.write(data)
         print("Written to tag!")
     finally:
@@ -21,8 +21,8 @@ def read_rfid() -> str:
     reader = MFRC()
 
     try:
-        _, encoded_text = reader.read()
-        text = zlib.decompress(encoded_text).decode()
+        _, compressed_text = reader.read()
+        text = zlib.decompress(compressed_text)
     finally:
         GPIO.cleanup()
         return text
