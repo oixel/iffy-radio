@@ -7,6 +7,8 @@ import requests
 import io
 from rfid_readerwriter import read_rfid
 
+# PL2fTbjKYTzKd6tTE7Dpzh9Oy5zcctaIm6 COVER
+
 # Draws button with given text label at set offset and with set colors
 def draw_button(view, font, text='', x_offset=0, y_offset=0, button_width=80, button_height=35, label_color=(255, 255, 255), button_color = (0, 0, 0)):
     HEIGHT, WIDTH = 800, 480
@@ -46,8 +48,16 @@ def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
     
     print(data)
     print(f"Tag size = {len(data)}")
+
+    if "COVER" in data:
+        data = data.split(" ")
+        playlist = Playlist(data[0])
+        image_source = playlist.description
+    else:
+        image_source = "https://i.ibb.co/DDKn0JH/starcat.jpg"
+    
     # Creates image surface from URL
-    req = requests.get("https://lh3.googleusercontent.com/_c4JMCiDeaC2RRfShXddOuIV_A7oCL4m1R6-YK-3TDlsYgNQTXwxV0f-TTJrsO1StMt07qW3O6XNPSNt")
+    req = requests.get(image_source)
     image = io.BytesIO(req.content)
     image = pygame.image.load(image).convert()
     image = pygame.transform.scale(image, (200, 200))
