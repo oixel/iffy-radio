@@ -3,7 +3,7 @@
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522 as MFRC
 
-def write() -> None:
+def write_rfid() -> None:
     writer = MFRC()
 
     try:
@@ -15,14 +15,11 @@ def write() -> None:
     finally:
         GPIO.cleanup()
 
-def read() -> None:
+def read_rfid() -> str:
     reader = MFRC()
 
     try:
-        print("Waiting for tag...")
-
-        id, text = reader.read()
-        print(f"ID: {id}")
-        print(f"Data: {text}")
+        _, text = reader.read()
     finally:
         GPIO.cleanup()
+        return text

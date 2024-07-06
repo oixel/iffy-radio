@@ -2,11 +2,12 @@ import data_handler as DH
 from downloader import *
 from renamer import *
 from pytube import Playlist
-import rfid_readerwriter as RFID
+from rfid_readerwriter import read_rfid
 import os
 
 def main() -> None:
-    data = RFID.read()
+    data = read_rfid()
+    print(data)
 
 if __name__ == "__main__":
     main()
