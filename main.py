@@ -18,6 +18,9 @@ def main() -> None:
     pygame.display.set_caption('iffy radio')
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
+    # Hides cursor on start up
+    pygame.mouse.set_visible(False)
+
     # Creates a background and fills it with pink
     background = pygame.Surface(SCREEN_SIZE)
     background.fill(pygame.Color('#FFC0CB'))
