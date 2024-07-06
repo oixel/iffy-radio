@@ -64,7 +64,7 @@ def main() -> None:
     screen.blit(background, (0, 0))
     screen.blit(image, center_pos)
     text_surface = pygame.font.Font(None, 24).render(data, False, (0, 0, 0))
-    screen.blit(text_surface, (240, 240))
+    screen.blit(text_surface, (10, 10))
     button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
     pygame.display.flip()
 
@@ -86,6 +86,7 @@ def main() -> None:
                     
                     screen.blit(background, (0, 0))
                     screen.blit(image, center_pos)
+                    screen.blit(text_surface, (10, 10))
                     button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
                     pygame.display.flip()
 
