@@ -80,6 +80,8 @@ def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
 
                     is_pink = not is_pink
                 elif back_button.collidepoint(pygame.mouse.get_pos()):
+                    background = pygame.Surface(SCREEN_SIZE)
+                    background.fill(pygame.Color('#FFC0CB'))
                     return True
 
 def main() -> None:
