@@ -8,6 +8,7 @@ import io
 from rfid_readerwriter import read_rfid
 
 # PL2fTbjKYTzKd6tTE7Dpzh9Oy5zcctaIm6 COVER
+# https://lh3.googleusercontent.com/_c4JMCiDeaC2RRfShXddOuIV_A7oCL4m1R6-YK-3TDlsYgNQTXwxV0f-TTJrsO1StMt07qW3O6XNPSNt
 
 # Draws button with given text label at set offset and with set colors
 def draw_button(view, font, text='', x_offset=0, y_offset=0, button_width=80, button_height=35, label_color=(255, 255, 255), button_color = (0, 0, 0)):
