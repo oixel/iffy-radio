@@ -55,7 +55,7 @@ def main() -> None:
     center_pos = (WIDTH / 2 - image.get_width() / 2, HEIGHT / 2 - image.get_height() / 2)
     screen.blit(image, center_pos)
 
-    button = draw_button(screen, pygame.font.Font(None, 24), 'TEST')
+    button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
 
     # Updates screen once
     pygame.display.flip()
@@ -78,7 +78,7 @@ def main() -> None:
                     
                     screen.blit(background, (0, 0))
                     screen.blit(image, center_pos)
-                    button = draw_button(screen, pygame.font.Font(None, 24), 'TEST')
+                    button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
                     pygame.display.flip()
 
                     is_pink = not is_pink
