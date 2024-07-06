@@ -12,7 +12,7 @@ def main() -> None:
 
     pygame.init()
     pygame.display.set_caption('iffy Radio')
-    screen = pygame.display.set_mode((800, 480))
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     background = pygame.Surface((800, 480))
     background.fill(pygame.Color('#FFC0CB'))
