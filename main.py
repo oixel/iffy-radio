@@ -7,8 +7,8 @@ import requests
 import io
 from rfid_readerwriter import read_rfid
 
-# PL2fTbjKYTzKd6tTE7Dpzh9Oy5zcctaIm6 COVER
-# https://lh3.googleusercontent.com/_c4JMCiDeaC2RRfShXddOuIV_A7oCL4m1R6-YK-3TDlsYgNQTXwxV0f-TTJrsO1StMt07qW3O6XNPSNt
+# PL2fTbjKYTzKd6tTE7Dpzh9Oy5zcctaIm6 <- IGOR
+# PL2fTbjKYTzKd-lCQfahnWHg_QMFyVAeq5 <- iffy
 
 # Draws button with given text label at set offset and with set colors
 def draw_button(view, font, text='', x_offset=0, y_offset=0, button_width=80, button_height=35, label_color=(255, 255, 255), button_color = (0, 0, 0)):
@@ -50,10 +50,11 @@ def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
     print(data)
     print(f"Tag size = {len(data)}")
 
-    if "COVER" in data:
-        data = data.split(" ")
-        playlist = Playlist(data[0])
-        image_source = playlist.description
+    playlist = Playlist(f'https://www.youtube.com/playlist?list={data}')
+    
+    # Applies custom cover if iffy is the playlist being played
+    if playlist.title == "iffy":
+        image_source = "https://store-032.blobstore.apple.com/sq-mq-us-032-000002/bb/eb/07/bbeb07d8-f4a6-4574-1540-d367025ddb6b/image?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240706T220734Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=MKIAJC19DXS75RV205ZP%2F20240706%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=c4c1d0f5795ec0c550efc9b7355b14841c389b864c59422ccb1c21949769e6ec"
     else:
         image_source = "https://i.ibb.co/DDKn0JH/starcat.jpg"
     
