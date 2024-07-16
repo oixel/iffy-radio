@@ -13,6 +13,10 @@ if __name__ == "__main__":
     # Hides cursor on start up
     # pygame.mouse.set_visible(False)
 
+    mid_x, mid_y = SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2
+    test_button_1 = Button(screen, 'assets/sprites/test_button.png', (mid_x - 75, mid_y))
+    test_button_2 = Button(screen, 'assets/sprites/test_button.png', (mid_x + 75, mid_y))
+
     is_running = True
     while is_running:
         for event in pygame.event.get():
@@ -21,7 +25,10 @@ if __name__ == "__main__":
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     is_running = False
-    
+
+        test_button_1.draw()
+        test_button_2.draw()
+
         pygame.display.update()
     
     pygame.quit()
