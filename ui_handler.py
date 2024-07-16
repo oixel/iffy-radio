@@ -25,9 +25,12 @@ if __name__ == "__main__":
     # Hides cursor on start up
     # pygame.mouse.set_visible(False)
 
+    # Debugging for button class functionality
     mid_x, mid_y = SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2
-    test_button_1 = Button(screen, test1, 'assets/sprites/test_button.png', (mid_x - 75, mid_y))
-    test_button_2 = Button(screen, test2, 'assets/sprites/test_button.png', (mid_x + 75, mid_y))
+    reg_img_path = 'assets/sprites/test_button.png'
+    pressed_img_path = 'assets/sprites/test_button_pressed.png'
+    test_button_1 = Button(screen, test1, (mid_x - 75, mid_y), reg_img_path, pressed_img_path)
+    test_button_2 = Button(screen, test2, (mid_x + 75, mid_y), reg_img_path, pressed_img_path)
 
     is_running = True
     while is_running:

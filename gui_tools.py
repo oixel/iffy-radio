@@ -1,12 +1,19 @@
 import pygame
 
 class Button:
-    def __init__(self, screen, function, image_path, position):
+    def __init__(self, screen, function, position, image_path, pressed_image_path=None):
         # Stores screen for reference in draw()
         self.screen = screen
         
-        # Loads image to serve as button's texture
-        self.image = pygame.image.load(image_path).convert_alpha()
+        # Loads unpressed variant of button's image
+        self.regular_image = pygame.image.load(image_path).convert_alpha()
+
+        # Loads pressed variant of button's image (if one exists)
+        if pressed_image_path != None:
+            self.pressed_image = pygame.image.load(pressed_image_path).convert_alpha()
+
+        # Sets button's current image to its unpressed variant
+        self.image = self.regular_image
 
         # Creates a rect from the loaded image
         self.rect = self.image.get_rect()
@@ -22,6 +29,7 @@ class Button:
         # Assigns the function that is called when button is pressed
         self.function = function
 
+        # Ensures that button can be clicked from its initialization
         self.clicked = True
         
     # Draws button onto the screen and handles function calling on button press
@@ -31,12 +39,24 @@ class Button:
         # Calls stored function when button is pressed
         if self.rect.collidepoint(mouse_pos):
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                # Ensures that button's click functionality only runs once
                 self.clicked = True
+
+                # Sets button's image to its pressed variant (if it exists)
+                if self.pressed_image != None:
+                    self.image = self.pressed_image
+                
+                # Calls this button's stored function
                 self.function()
         
         # Resets unpressed boolean when mouse is no longer being pressed down
         if self.clicked == True:
             if not pygame.mouse.get_pressed()[0] == 1:
+                # Resets button's click state to allow it to be clicked again
                 self.clicked = False
+
+                # Resets button's image to its unpressed variant
+                self.image = self.regular_image
         
+        # Draws button's current image onto screen at its stored position
         self.screen.blit(self.image, self.position)
