@@ -34,8 +34,8 @@ if __name__ == "__main__":
     mid_x, mid_y = SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2
     reg_img_path = 'assets/sprites/test_button.png'
     pressed_img_path = 'assets/sprites/test_button_pressed.png'
-    test_button_1 = Button(screen, test1, (mid_x - 75, mid_y + 50), reg_img_path, pressed_img_path)
-    test_button_2 = Button(screen, test2, (mid_x + 75, mid_y + 50), reg_img_path, pressed_img_path)
+    test_button_1 = Button(screen, test1, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
+    test_button_2 = Button(screen, test2, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
 
     song_info = SongInfo(screen, "content/songs/TEST/v1eypolupH0.mp3", (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
 

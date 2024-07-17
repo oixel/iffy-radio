@@ -2,6 +2,7 @@ import pygame
 from mutagen.id3 import ID3
 from io import BytesIO
 
+# Handles buttons in menus with rendering their different images and pressing functionality
 class Button:
     def __init__(self, screen, function, position, image_path, pressed_image_path=None):
         # Stores screen for reference in draw()
@@ -63,21 +64,30 @@ class Button:
         # Draws button's current image onto screen at its stored position
         self.screen.blit(self.image, self.position)
 
+# Handles the song information presented at the center of the screen
 class SongInfo:
-    #
-    # Two methods to go about this:
-    # 1: Utilize mutagen to write image data into file and then pull the data from it
-    # 2: Program new cover system downloading covers under album names and simply loading from file rather than requests
-    #
+    # Constant storing the size of cover art image
+    IMAGE_SIZE = (150, 150)
+
     def __init__(self, screen, mp3_path, position) -> None:
+        # Stores parameterized screen as object's screen
         self.screen = screen
 
-        tags = ID3(mp3_path)
-        image_data = tags.getall('APIC')[0].data
+        # Creates ID3 tags object from MP3 at given path
+        id3 = ID3(mp3_path)
+
+        # Stores MP3's ID3 tag info
+        self.artist = id3['TPE1'].text[0]
+        self.song = id3['TIT2'].text[0]
+        self.album = id3['TALB'].text[0]
+        
+        # Loads in embedded cover art as byte data
+        image_data = id3.getall('APIC')[0].data
         image = BytesIO(image_data)
 
+        # Creates image square from embedded image data
         image = pygame.image.load(image).convert_alpha()
-        self.cover_image = pygame.transform.scale(image, (100, 100))
+        self.cover_image = pygame.transform.scale(image, self.IMAGE_SIZE)
 
         # Creates a rect from the loaded image
         self.rect = self.cover_image.get_rect()
@@ -89,16 +99,27 @@ class SongInfo:
 
         # Positions button's rect's center at calculated position
         self.rect.center =  position
-        
+    
+    # Takes in a new MP3 and updates stored song data
     def update_data(self, mp3_path) -> None:
-        tags = ID3(mp3_path)
-        image_data = tags.getall('APIC')[0].data
+        # Creates ID3 tags from new MP3
+        id3 = ID3(mp3_path)
+
+        # Updates stored song info
+        self.artist = id3['TPE1'].text[0]
+        self.song = id3['TIT2'].text[0]
+        self.album = id3['TALB'].text[0]
+
+        # Loads in new MP3's embedded cover image
+        image_data = id3.getall('APIC')[0].data
         image = BytesIO(image_data)
 
+        # Replaces currently rendered image with newly loaded image
         image = pygame.image.load(image).convert_alpha()
-        self.cover_image = pygame.transform.scale(image, (100, 100))
+        self.cover_image = pygame.transform.scale(image, self.IMAGE_SIZE)
         self.rect = self.cover_image.get_rect()
-        self.rect.topleft = (100, 100)
+        self.rect.center =  self.position
 
+    # Draws song information onto screen
     def draw(self) -> None:
         self.screen.blit(self.cover_image, self.position)
