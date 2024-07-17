@@ -9,6 +9,7 @@ from rfid_readerwriter import read_rfid
 
 # PL2fTbjKYTzKd6tTE7Dpzh9Oy5zcctaIm6 <- IGOR
 # PL2fTbjKYTzKd-lCQfahnWHg_QMFyVAeq5 <- iffy
+# Potential custom images using short url ?
 
 # Draws button with given text label at set offset and with set colors
 def draw_button(view, font, text='', x_offset=0, y_offset=0, button_width=80, button_height=35, label_color=(255, 255, 255), button_color = (0, 0, 0)):

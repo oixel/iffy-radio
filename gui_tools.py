@@ -1,4 +1,6 @@
 import pygame
+import taglib
+import io, requests
 
 class Button:
     def __init__(self, screen, function, position, image_path, pressed_image_path=None):
@@ -7,7 +9,7 @@ class Button:
         
         # Loads unpressed variant of button's image
         self.regular_image = pygame.image.load(image_path).convert_alpha()
-
+        
         # Loads pressed variant of button's image (if one exists)
         if pressed_image_path != None:
             self.pressed_image = pygame.image.load(pressed_image_path).convert_alpha()
@@ -60,3 +62,32 @@ class Button:
         
         # Draws button's current image onto screen at its stored position
         self.screen.blit(self.image, self.position)
+
+class SongInfo:
+    def __init__(self, screen, position) -> None:
+        self.screen = screen
+        content = requests.get("https://i.ibb.co/DDKn0JH/starcat.jpg").content
+        image_data = io.BytesIO(content)
+
+        image = pygame.image.load(image_data).convert_alpha()
+        self.cover_image = pygame.transform.scale(image, (100, 100))
+
+        # Creates a rect from the loaded image
+        self.rect = self.cover_image.get_rect()
+
+        # Ensures the button's image's center is placed at paramterized position
+        x = position[0] - (self.rect.size[0] / 2)
+        y = position[1] - (self.rect.size[1] / 2)
+        self.position = (x, y) 
+
+        # Positions button's rect's center at calculated position
+        self.rect.center =  position
+        
+    def update_data(self, image) -> None:
+        image = pygame.image.load(image).convert_alpha()
+        self.cover_image = pygame.transform.scale(image, (100, 100))
+        self.rect = self.cover_image.get_rect()
+        self.rect.topleft = (100, 100)
+
+    def draw(self) -> None:
+        self.screen.blit(self.cover_image, self.position)
