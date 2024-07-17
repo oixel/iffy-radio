@@ -9,10 +9,7 @@ def test1():
     background.fill(pygame.Color('#d184a1'))
     screen.blit(background, (0, 0))
 
-    song = taglib.File("content/songs/TEST/1RKqOmSkGgM.mp3")
-    content = requests.get(song.tags["COVER_SRC"][0]).content
-    image = io.BytesIO(content)
-    song_info.update_data(image)
+    song_info.update_data("content/songs/TEST/1RKqOmSkGgM.mp3")
     
 
 # Temporary function to be called when 2nd test button is pressed
@@ -21,10 +18,7 @@ def test2():
     background.fill(pygame.Color('#44752e'))
     screen.blit(background, (0, 0))
 
-    song = taglib.File("content/songs/TEST/BBsV0Q7kGGY.mp3")
-    content = requests.get(song.tags["COVER_SRC"][0]).content
-    image = io.BytesIO(content)
-    song_info.update_data(image)
+    song_info.update_data("content/songs/TEST/BBsV0Q7kGGY.mp3")
 
 if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
@@ -43,7 +37,7 @@ if __name__ == "__main__":
     test_button_1 = Button(screen, test1, (mid_x - 75, mid_y + 50), reg_img_path, pressed_img_path)
     test_button_2 = Button(screen, test2, (mid_x + 75, mid_y + 50), reg_img_path, pressed_img_path)
 
-    song_info = SongInfo(screen, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
+    song_info = SongInfo(screen, "content/songs/TEST/v1eypolupH0.mp3", (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
 
     is_running = True
     while is_running:

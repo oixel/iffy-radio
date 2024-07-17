@@ -1,6 +1,6 @@
 import pygame
-import taglib
-import io, requests
+from mutagen.id3 import ID3
+from io import BytesIO
 
 class Button:
     def __init__(self, screen, function, position, image_path, pressed_image_path=None):
@@ -64,12 +64,19 @@ class Button:
         self.screen.blit(self.image, self.position)
 
 class SongInfo:
-    def __init__(self, screen, position) -> None:
+    #
+    # Two methods to go about this:
+    # 1: Utilize mutagen to write image data into file and then pull the data from it
+    # 2: Program new cover system downloading covers under album names and simply loading from file rather than requests
+    #
+    def __init__(self, screen, mp3_path, position) -> None:
         self.screen = screen
-        content = requests.get("https://i.ibb.co/DDKn0JH/starcat.jpg").content
-        image_data = io.BytesIO(content)
 
-        image = pygame.image.load(image_data).convert_alpha()
+        tags = ID3(mp3_path)
+        image_data = tags.getall('APIC')[0].data
+        image = BytesIO(image_data)
+
+        image = pygame.image.load(image).convert_alpha()
         self.cover_image = pygame.transform.scale(image, (100, 100))
 
         # Creates a rect from the loaded image
@@ -83,7 +90,11 @@ class SongInfo:
         # Positions button's rect's center at calculated position
         self.rect.center =  position
         
-    def update_data(self, image) -> None:
+    def update_data(self, mp3_path) -> None:
+        tags = ID3(mp3_path)
+        image_data = tags.getall('APIC')[0].data
+        image = BytesIO(image_data)
+
         image = pygame.image.load(image).convert_alpha()
         self.cover_image = pygame.transform.scale(image, (100, 100))
         self.rect = self.cover_image.get_rect()

@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup as BS
+from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3, APIC
 from io import BytesIO
-import taglib
 from renamer import fix_unicode
 from downloader import get_song
 
@@ -121,14 +122,36 @@ class DataHandler:
 
     # Writes metadata into MP3 file
     def write_data(self, directory, path, file_name) -> None:
-        with taglib.File(f"{path}{file_name}.mp3", save_on_exit=True) as song:
-            song.tags["TITLE"] = [self.metadata['title']]
-            
-            # Embeds scraped artist or custom artist (if overwriting occured) into MP3
-            song.tags["ARTIST"] = [self.metadata['artist']]
-            
-            # Writes scraped album or custom album (if overwriting occured) into MP3
-            song.tags["ALBUM"] = [self.metadata['album']]
+        # Creates an EasyID3 object and edits their metadata using mutagen
+        audio = EasyID3()
+        audio["title"] = f"{self.metadata['title']}"
+        
+        # Embeds scraped artist or custom artist (if overwriting occured) into MP3
+        audio["artist"] = f"{self.metadata['artist']}"
+        audio["albumartist"] = f"{self.metadata['artist']}"
+        
+        # Writes scraped album or custom album (if overwriting occured) into MP3
+        audio["album"] = f"{self.metadata['album']}"
 
-            # Writes cover image's url into MP3's tag data
-            song.tags["COVER_SRC"] = [self.metadata['cover_src']]
+        # Saves metadata into proper MP3 file
+        audio.save(f"{path}{file_name}.mp3")
+
+        
+        # Reads and store byte data for album cover image from image source's URL
+        cont = requests.get(self.metadata['cover_src']).content
+        image_bytes = BytesIO(cont).read()
+
+        # Creates an ID3 object for current song (EasyID3 does not support embedding album art)
+        id3 = ID3(f"{path}{file_name}.mp3")
+        
+        # Embeds image byte data into front cover metadata tag
+        id3["APIC"] = APIC(
+            encoding = 3,
+            mime = "image/jpeg",
+            type = 3,
+            desc = u'Cover',
+            data = image_bytes
+        )
+
+        # Saves new image data into MP3's ID3 metadata tags
+        id3.save()
