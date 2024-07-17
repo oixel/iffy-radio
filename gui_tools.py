@@ -33,13 +33,13 @@ class Button:
         self.function = function
 
         # Ensures that button can be clicked from its initialization
-        self.clicked = True
+        self.clicked = False
         
     # Draws button onto the screen and handles function calling on button press
     def draw(self) -> None:
         mouse_pos = pygame.mouse.get_pos()
 
-        # Calls stored function when button is pressed
+        # Changes button's clicked state and updates image
         if self.rect.collidepoint(mouse_pos):
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 # Ensures that button's click functionality only runs once
@@ -49,12 +49,14 @@ class Button:
                 if self.pressed_image != None:
                     self.image = self.pressed_image
                 
-                # Calls this button's stored function
-                self.function()
+                
         
-        # Resets unpressed boolean when mouse is no longer being pressed down
+        # Calls function and resets unpressed boolean when mouse is no longer being pressed down and 
         if self.clicked == True:
             if not pygame.mouse.get_pressed()[0] == 1:
+                # Calls this button's stored function
+                self.function()
+
                 # Resets button's click state to allow it to be clicked again
                 self.clicked = False
 
