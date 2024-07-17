@@ -10,6 +10,10 @@ def test1():
     screen.blit(background, (0, 0))
 
     song_info.update_data("content/songs/TEST/1RKqOmSkGgM.mp3")
+
+    pygame.mixer.music.pause()
+    pygame.mixer.music.load("content/songs/TEST/1RKqOmSkGgM.mp3")
+    pygame.mixer.music.play()
     
 
 # Temporary function to be called when 2nd test button is pressed
@@ -19,6 +23,10 @@ def test2():
     screen.blit(background, (0, 0))
 
     song_info.update_data("content/songs/TEST/BBsV0Q7kGGY.mp3")
+    
+    pygame.mixer.music.pause()
+    pygame.mixer.music.load("content/songs/TEST/BBsV0Q7kGGY.mp3")
+    pygame.mixer.music.play()
 
 if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
@@ -38,6 +46,10 @@ if __name__ == "__main__":
     test_button_2 = Button(screen, test2, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
 
     song_info = SongInfo(screen, "content/songs/TEST/v1eypolupH0.mp3", (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
+    
+    pygame.mixer.init()
+    pygame.mixer.music.load("content/songs/TEST/v1eypolupH0.mp3")
+    pygame.mixer.music.play()
 
     is_running = True
     while is_running:
