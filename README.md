@@ -4,8 +4,8 @@
 2. Install python extension in VS Code
 3. Run "sudo apt install pip" in CMD
 
+NOTE: Might need to utilize --break-system- on Raspberry Pi
+
 # WILL HAVE TO AUTHENTICATE YOUTUBE ACCOUNT IN TERMINAL TO DOWNLOAD AGE RESTRICTED VIDEOS
 
-Rest of requirements soon to be written out.
-
-NOTE: If getting pytube error follow this: https://stackoverflow.com/questions/70776558/pytube-exceptions-regexmatcherror-init-could-not-find-match-for-w-w
+Rest of requirements soon to be written out soon
