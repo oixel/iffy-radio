@@ -12,8 +12,6 @@ def test1() -> None:
 
     song_info.update_data("songs/1RKqOmSkGgM.mp3")
 
-    test_text.change_text(song_info.song)
-
     pygame.mixer.music.pause()
     pygame.mixer.music.load("songs/1RKqOmSkGgM.mp3")
     pygame.mixer.music.play()
@@ -26,8 +24,6 @@ def test2() -> None:
     screen.blit(background, (0, 0))
 
     song_info.update_data("songs/BBsV0Q7kGGY.mp3")
-
-    test_text.change_text(song_info.song)
     
     pygame.mixer.music.pause()
     pygame.mixer.music.load("songs/BBsV0Q7kGGY.mp3")
@@ -64,8 +60,6 @@ if __name__ == "__main__":
     pygame.mixer.music.load("songs/v1eypolupH0.mp3")
     pygame.mixer.music.play()
     
-    test_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, song_info.song, (255, 255, 255), (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
-
     is_running = True
     while is_running:
         for event in pygame.event.get():
@@ -79,7 +73,6 @@ if __name__ == "__main__":
         test_button_2.draw()
         pause_button.draw()
         song_info.draw()
-        test_text.draw()
 
         pygame.display.update()
     
