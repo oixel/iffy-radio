@@ -2,6 +2,30 @@ import pygame
 from mutagen.id3 import ID3
 from io import BytesIO
 
+#
+class Text:
+    def __init__(self, screen, font_path, size, text, color, position) -> None:
+        self.screen = screen
+        self.text = text
+        self.color = color
+        self.reg_pos = position
+
+        self.text_object = pygame.freetype.Font(font_path, size)
+
+        self.update_position()
+
+    def update_position(self) -> None:
+        text_rect = self.text_object.get_rect(self.text)
+        width, height = text_rect.width, text_rect.height
+        self.position = (self.reg_pos[0] - width / 2, self.reg_pos[1] - height / 2)
+    
+    def draw(self) -> None:
+        self.text_object.render_to(self.screen, self.position, self.text, self.color)
+    
+    def change_text(self, text) -> None:
+        self.text = text
+        self.update_position()
+
 # Handles buttons in menus with rendering their different images and pressing functionality
 class Button:
     def __init__(self, screen, function, position, image_path, pressed_image_path=None):

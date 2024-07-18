@@ -1,3 +1,4 @@
+import pygame.freetype
 from gui_tools import *
 
 # Default dimensions of touchscreen
@@ -9,10 +10,12 @@ def test1() -> None:
     background.fill(pygame.Color('#d184a1'))
     screen.blit(background, (0, 0))
 
-    song_info.update_data("content/songs/TEST/1RKqOmSkGgM.mp3")
+    song_info.update_data("songs/1RKqOmSkGgM.mp3")
+
+    test_text.change_text(song_info.song)
 
     pygame.mixer.music.pause()
-    pygame.mixer.music.load("content/songs/TEST/1RKqOmSkGgM.mp3")
+    pygame.mixer.music.load("songs/1RKqOmSkGgM.mp3")
     pygame.mixer.music.play()
     
 
@@ -22,10 +25,12 @@ def test2() -> None:
     background.fill(pygame.Color('#44752e'))
     screen.blit(background, (0, 0))
 
-    song_info.update_data("content/songs/TEST/BBsV0Q7kGGY.mp3")
+    song_info.update_data("songs/BBsV0Q7kGGY.mp3")
+
+    test_text.change_text(song_info.song)
     
     pygame.mixer.music.pause()
-    pygame.mixer.music.load("content/songs/TEST/BBsV0Q7kGGY.mp3")
+    pygame.mixer.music.load("songs/BBsV0Q7kGGY.mp3")
     pygame.mixer.music.play()
 
 # Toggles pause on music depending on its current state
@@ -47,18 +52,20 @@ if __name__ == "__main__":
 
     # Debugging for button class functionality
     mid_x, mid_y = SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2
-    reg_img_path = 'assets/sprites/test_button.png'
-    pressed_img_path = 'assets/sprites/test_button_pressed.png'
+    reg_img_path = 'assets/textures/test_button.png'
+    pressed_img_path = 'assets/textures/test_button_pressed.png'
     test_button_1 = Button(screen, test1, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
     test_button_2 = Button(screen, test2, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 140), reg_img_path, pressed_img_path)
 
-    song_info = SongInfo(screen, "content/songs/TEST/v1eypolupH0.mp3", (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
+    song_info = SongInfo(screen, "songs/v1eypolupH0.mp3", (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
     
     pygame.mixer.init()
-    pygame.mixer.music.load("content/songs/TEST/v1eypolupH0.mp3")
+    pygame.mixer.music.load("songs/v1eypolupH0.mp3")
     pygame.mixer.music.play()
     
+    test_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, song_info.song, (255, 255, 255), (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+
     is_running = True
     while is_running:
         for event in pygame.event.get():
@@ -72,6 +79,7 @@ if __name__ == "__main__":
         test_button_2.draw()
         pause_button.draw()
         song_info.draw()
+        test_text.draw()
 
         pygame.display.update()
     
