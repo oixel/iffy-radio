@@ -2,30 +2,31 @@ import pygame
 from mutagen.id3 import ID3
 from io import BytesIO
 
-#
+# Handles creation of text objects
 class Text:
     def __init__(self, screen, font_path, size, text, color, position) -> None:
-        #
+        # Stores text's attributes for future use
+        self.size = size
         self.screen = screen
         self.text = text
         self.color = color
-        self.reg_pos = position
+        self.position = position
 
-        self.text_object = pygame.freetype.Font(font_path, size)
+        # Creates text object
+        self.text_object = pygame.freetype.Font(font_path, self.size)
 
         self.update_position()
 
-    # 
+    # Creates rect from text and centers it
     def update_position(self) -> None:
-        text_rect = self.text_object.get_rect(self.text)
-        width, height = text_rect.width, text_rect.height
-        self.position = (self.reg_pos[0] - width / 2, self.reg_pos[1] - height / 2)
+        self.rect = self.text_object.get_rect(self.text)
+        self.rect.center = self.position
     
-    # 
+    # Renders text onto screen
     def draw(self) -> None:
-        self.text_object.render_to(self.screen, self.position, self.text, self.color)
+        self.text_object.render_to(self.screen, self.rect, self.text, self.color, size = self.size)
     
-    # 
+    # Takes in new string and changes text to display it instead ad then recenters it
     def change_text(self, text) -> None:
         self.text = text
         self.update_position()
@@ -49,11 +50,6 @@ class Button:
         # Creates a rect from the loaded image
         self.rect = self.image.get_rect()
 
-        # Ensures the button's image's center is placed at paramterized position
-        x = position[0] - (self.rect.size[0] / 2)
-        y = position[1] - (self.rect.size[1] / 2)
-        self.position = (x, y) 
-
         # Positions button's rect's center at calculated position
         self.rect.center =  position
 
@@ -76,8 +72,6 @@ class Button:
                 # Sets button's image to its pressed variant (if it exists)
                 if self.pressed_image != None:
                     self.image = self.pressed_image
-                
-                
         
         # Calls function and resets unpressed boolean when mouse is no longer being pressed down and 
         if self.clicked == True:
@@ -92,7 +86,7 @@ class Button:
                 self.image = self.regular_image
         
         # Draws button's current image onto screen at its stored position
-        self.screen.blit(self.image, self.position)
+        self.screen.blit(self.image, self.rect)
 
 # Handles the song information presented at the center of the screen
 class SongInfo:
@@ -122,15 +116,16 @@ class SongInfo:
         # Creates a rect from the loaded image
         self.rect = self.cover_image.get_rect()
 
-        # Ensures the button's image's center is placed at paramterized position
-        x = position[0] - (self.rect.size[0] / 2)
-        y = position[1] - (self.rect.size[1] / 2)
-        self.cover_position = (x, y) 
+        # Stores where cover is positioned
+        self.cover_position = position
 
         # Positions button's rect's center at calculated position
         self.rect.center =  position
 
-        song_text_pos = (self.rect.center[0], self.rect.center[1] - 100)
+        artist_text_pos = (position[0], position[1] - 125)
+        self.artist_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 16, self.artist, (255, 255, 255), artist_text_pos)
+
+        song_text_pos = (position[0], position[1] - 100)
         self.song_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, self.song, (255, 255, 255), song_text_pos)
     
     # Takes in a new MP3 and updates stored song data
@@ -153,10 +148,12 @@ class SongInfo:
         self.rect = self.cover_image.get_rect()
         self.rect.center =  self.cover_position
 
-        # 
+        # Updates song info to new song
+        self.artist_text.change_text(self.artist)
         self.song_text.change_text(self.song)
 
-    # Draws song information onto screen
+    # Renders song information onto screen
     def draw(self) -> None:
-        self.screen.blit(self.cover_image, self.cover_position)
+        self.screen.blit(self.cover_image, self.rect)
+        self.artist_text.draw()
         self.song_text.draw()
