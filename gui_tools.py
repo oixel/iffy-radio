@@ -5,6 +5,7 @@ from io import BytesIO
 #
 class Text:
     def __init__(self, screen, font_path, size, text, color, position) -> None:
+        #
         self.screen = screen
         self.text = text
         self.color = color
@@ -14,14 +15,17 @@ class Text:
 
         self.update_position()
 
+    # 
     def update_position(self) -> None:
         text_rect = self.text_object.get_rect(self.text)
         width, height = text_rect.width, text_rect.height
         self.position = (self.reg_pos[0] - width / 2, self.reg_pos[1] - height / 2)
     
+    # 
     def draw(self) -> None:
         self.text_object.render_to(self.screen, self.position, self.text, self.color)
     
+    # 
     def change_text(self, text) -> None:
         self.text = text
         self.update_position()
@@ -121,10 +125,13 @@ class SongInfo:
         # Ensures the button's image's center is placed at paramterized position
         x = position[0] - (self.rect.size[0] / 2)
         y = position[1] - (self.rect.size[1] / 2)
-        self.position = (x, y) 
+        self.cover_position = (x, y) 
 
         # Positions button's rect's center at calculated position
         self.rect.center =  position
+
+        song_text_pos = (self.rect.center[0], self.rect.center[1] - 100)
+        self.song_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, self.song, (255, 255, 255), song_text_pos)
     
     # Takes in a new MP3 and updates stored song data
     def update_data(self, mp3_path) -> None:
@@ -144,8 +151,12 @@ class SongInfo:
         image = pygame.image.load(image).convert_alpha()
         self.cover_image = pygame.transform.scale(image, self.IMAGE_SIZE)
         self.rect = self.cover_image.get_rect()
-        self.rect.center =  self.position
+        self.rect.center =  self.cover_position
+
+        # 
+        self.song_text.change_text(self.song)
 
     # Draws song information onto screen
     def draw(self) -> None:
-        self.screen.blit(self.cover_image, self.position)
+        self.screen.blit(self.cover_image, self.cover_position)
+        self.song_text.draw()
