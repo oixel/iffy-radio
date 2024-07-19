@@ -22,6 +22,11 @@ def start() -> None:
     # 
     playlist_url = f"https://www.youtube.com/playlist?list={read_rfid()}"
 
+    screen.blit(background, (0, 0))
+    start_text.change_text("Verifying playlist...")
+    start_text.draw()
+    pygame.display.update()
+
     #
     try:
         playlist = Playlist(playlist_url)

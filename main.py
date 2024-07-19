@@ -13,7 +13,12 @@ SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 def start() -> None:
     #playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
     playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
-    
+
+    screen.blit(background, (0, 0))
+    start_text.change_text("Verifying playlist...")
+    start_text.draw()
+    pygame.display.update()
+
     #
     try:
         playlist = Playlist(playlist_url)
