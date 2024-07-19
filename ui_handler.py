@@ -17,15 +17,18 @@ def start() -> None:
 
     for url in playlist.video_urls:
         file_name = url[32:]
+
+        queue.append(f"songs/{file_name}.mp3")
+
         if not os.path.isfile(f"songs/{file_name}.mp3"):
             not_downloaded.append(url)
     
     download_count = 0
-    start_text.change_text(f"{len(not_downloaded)} out of {len(playlist.video_urls)} not downloaded...")
+    start_text.change_text(f"{len(not_downloaded)} out of {len(playlist.video_urls)} songs not downloaded...")
     status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
 
     background = pygame.Surface(SCREEN_SIZE)
-    background.fill(pygame.Color((0, 0, 0)))
+    background.fill((0, 0, 0))
 
     screen.blit(background, (0, 0))
     start_text.draw()
@@ -54,7 +57,7 @@ def start() -> None:
     state = 1
 
     pygame.mixer.init()
-    pygame.mixer.music.load("songs/v1eypolupH0.mp3")
+    pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
 
 # Temporary function to be called when 1st test button is pressed
@@ -63,23 +66,29 @@ def test1() -> None:
     background.fill(pygame.Color('#d184a1'))
     screen.blit(background, (0, 0))
 
-    song_info.update_data("songs/1RKqOmSkGgM.mp3")
+    global track_num
+    track_num = len(queue) - 1 if track_num == 0 else track_num - 1
+
+    song_info.update_data(queue[track_num])
 
     pygame.mixer.music.pause()
-    pygame.mixer.music.load("songs/1RKqOmSkGgM.mp3")
+    pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
     
 
 # Temporary function to be called when 2nd test button is pressed
 def test2() -> None:
     background = pygame.Surface(SCREEN_SIZE)
-    background.fill(pygame.Color('#44752e'))
+    background.fill(pygame.Color('#d184a1'))
     screen.blit(background, (0, 0))
 
-    song_info.update_data("songs/BBsV0Q7kGGY.mp3")
+    global track_num
+    track_num = 0 if track_num == len(queue) - 1 else track_num + 1
+
+    song_info.update_data(queue[track_num])
     
     pygame.mixer.music.pause()
-    pygame.mixer.music.load("songs/BBsV0Q7kGGY.mp3")
+    pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
 
 # Toggles pause on music depending on its current state
@@ -93,12 +102,15 @@ if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
     pygame.init()
     pygame.display.set_caption('iffy radio')
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    # screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     # Tracks state to render proper UI elements
-    global state
     state = 0
+
+    #
+    queue = []
+    track_num = 0
 
     # Hides cursor on start up
     # pygame.mouse.set_visible(False)
@@ -133,9 +145,9 @@ if __name__ == "__main__":
 
         if state == 1 and initial_state:
             background = pygame.Surface(SCREEN_SIZE)
-            background.fill(pygame.Color((0, 0, 0)))
+            background.fill(pygame.Color('#d184a1'))
             screen.blit(background, (0, 0))
-            song_info = SongInfo(screen, "songs/v1eypolupH0.mp3", (mid_x, mid_y - 40))
+            song_info = SongInfo(screen, queue[0], (mid_x, mid_y - 40))
             initial_state = False
 
         if state == 0:
