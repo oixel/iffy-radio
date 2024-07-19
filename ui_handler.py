@@ -1,16 +1,61 @@
 import pygame.freetype
+import os
+from pytubefix import Playlist
 from gui_tools import *
+from data_handler import *
+from downloader import *
 
 # Default dimensions of touchscreen
 SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 
 #
 def start() -> None:
-    print("start!")
+    playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
+    playlist = Playlist(playlist_url)
 
-    #pygame.mixer.init()
-    #pygame.mixer.music.load("songs/v1eypolupH0.mp3")
-    #pygame.mixer.music.play()
+    not_downloaded = []
+
+    for url in playlist.video_urls:
+        file_name = url[32:]
+        if not os.path.isfile(f"songs/{file_name}.mp3"):
+            not_downloaded.append(url)
+    
+    download_count = 0
+    start_text.change_text(f"{len(not_downloaded)} out of {len(playlist.video_urls)} not downloaded...")
+    status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
+
+    background = pygame.Surface(SCREEN_SIZE)
+    background.fill(pygame.Color((0, 0, 0)))
+
+    screen.blit(background, (0, 0))
+    start_text.draw()
+    status_text.draw()
+    pygame.display.update()
+
+    for song_url in not_downloaded:
+        file_name = song_url[32:]
+
+        dh = DataHandler(song_url)
+
+        if download_song(song_url, "", "songs/", file_name) == False:
+            continue
+        
+        dh.write_data("", "songs/", file_name)
+
+        download_count += 1
+        status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
+
+        screen.blit(background, (0, 0))
+        start_text.draw()
+        status_text.draw()
+        pygame.display.update()
+
+    global state
+    state = 1
+
+    pygame.mixer.init()
+    pygame.mixer.music.load("songs/v1eypolupH0.mp3")
+    pygame.mixer.music.play()
 
 # Temporary function to be called when 1st test button is pressed
 def test1() -> None:
@@ -52,6 +97,7 @@ if __name__ == "__main__":
     # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     # Tracks state to render proper UI elements
+    global state
     state = 0
 
     # Hides cursor on start up
@@ -66,12 +112,16 @@ if __name__ == "__main__":
     start_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
     start_button = Button(screen, start, (mid_x, mid_y + 35), reg_img_path, pressed_img_path)
 
+    # UI Elements in status state
+    status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
+    
     # UI Elements in main state
     test_button_1 = Button(screen, test1, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
     test_button_2 = Button(screen, test2, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
-    song_info = SongInfo(screen, "songs/v1eypolupH0.mp3", (mid_x, mid_y - 40))
     
+    initial_state = True
+
     is_running = True
     while is_running:
         for event in pygame.event.get():
@@ -80,6 +130,13 @@ if __name__ == "__main__":
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     is_running = False
+
+        if state == 1 and initial_state:
+            background = pygame.Surface(SCREEN_SIZE)
+            background.fill(pygame.Color((0, 0, 0)))
+            screen.blit(background, (0, 0))
+            song_info = SongInfo(screen, "songs/v1eypolupH0.mp3", (mid_x, mid_y - 40))
+            initial_state = False
 
         if state == 0:
             start_text.draw()
