@@ -134,11 +134,6 @@ if __name__ == "__main__":
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
     
     initial_state = True
-    
-    # 
-    background = pygame.Surface(SCREEN_SIZE)
-    background.fill(pygame.Color('#d184a1'))
-    screen.blit(background, (0, 0))
 
     is_running = True
     while is_running:
