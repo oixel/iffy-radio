@@ -76,7 +76,7 @@ def start() -> None:
     pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
 
-
+#
 def shuffle() -> None:
     global queue
     global start_queue
@@ -86,7 +86,6 @@ def shuffle() -> None:
         random.shuffle(queue)
     else:  # Otherwise, unshuffle
         queue = start_queue
-
 
 # 
 def back() -> None:
@@ -103,7 +102,6 @@ def back() -> None:
     pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
     
-
 # 
 def skip() -> None:
     background = pygame.Surface(SCREEN_SIZE)
@@ -131,7 +129,6 @@ if __name__ == "__main__":
     pygame.init()
     pygame.display.set_caption('iffy radio')
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     # Tracks state to render proper UI elements
     state = 0
@@ -140,9 +137,6 @@ if __name__ == "__main__":
     start_queue = []  # Stores unshuffled queue
     queue = []  # Stores current queue (shuffled or not)
     track_num = 0
-
-    # Hides cursor on start up
-    # pygame.mouse.set_visible(False)
 
     # Basic variables for test UI
     mid_x, mid_y = screen.get_rect().center
