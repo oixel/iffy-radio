@@ -20,7 +20,6 @@ def read_rfid() -> str:
 
     try:
         _, text = reader.read()
-        print(text)
     finally:
         GPIO.cleanup()
         return text
@@ -32,4 +31,4 @@ if __name__ == "__main__":
         print("Data written!")
     elif int(choice) == 2:
         print("Tap tag!")
-        read_rfid()
+        print(read_rfid())
