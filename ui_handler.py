@@ -4,6 +4,14 @@ from gui_tools import *
 # Default dimensions of touchscreen
 SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 
+#
+def start() -> None:
+    print("start!")
+
+    #pygame.mixer.init()
+    #pygame.mixer.music.load("songs/v1eypolupH0.mp3")
+    #pygame.mixer.music.play()
+
 # Temporary function to be called when 1st test button is pressed
 def test1() -> None:
     background = pygame.Surface(SCREEN_SIZE)
@@ -40,25 +48,29 @@ if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
     pygame.init()
     pygame.display.set_caption('iffy radio')
-    # screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+    # Tracks state to render proper UI elements
+    state = 0
 
     # Hides cursor on start up
     # pygame.mouse.set_visible(False)
 
-    # Debugging for button class functionality
+    # Basic variables for test UI
     mid_x, mid_y = screen.get_rect().center
     reg_img_path = 'assets/textures/test_button.png'
     pressed_img_path = 'assets/textures/test_button_pressed.png'
+
+    # UI Elements in start state
+    start_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
+    start_button = Button(screen, start, (mid_x, mid_y + 35), reg_img_path, pressed_img_path)
+
+    # UI Elements in main state
     test_button_1 = Button(screen, test1, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
     test_button_2 = Button(screen, test2, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
-
     song_info = SongInfo(screen, "songs/v1eypolupH0.mp3", (mid_x, mid_y - 40))
-    
-    pygame.mixer.init()
-    pygame.mixer.music.load("songs/v1eypolupH0.mp3")
-    pygame.mixer.music.play()
     
     is_running = True
     while is_running:
@@ -69,10 +81,14 @@ if __name__ == "__main__":
                 if event.key == pygame.K_ESCAPE:
                     is_running = False
 
-        test_button_1.draw()
-        test_button_2.draw()
-        pause_button.draw()
-        song_info.draw()
+        if state == 0:
+            start_text.draw()
+            start_button.draw()
+        elif state == 1:
+            test_button_1.draw()
+            test_button_2.draw()
+            pause_button.draw()
+            song_info.draw()
 
         pygame.display.update()
     
