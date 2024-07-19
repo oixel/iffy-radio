@@ -14,6 +14,8 @@ def start() -> None:
     #playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
     playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
 
+    background = pygame.Surface(SCREEN_SIZE)
+    background.fill((0, 0, 0))
     screen.blit(background, (0, 0))
     start_text.change_text("Verifying playlist...")
     start_text.draw()
@@ -27,8 +29,6 @@ def start() -> None:
         start()
 
     # 
-    background = pygame.Surface(SCREEN_SIZE)
-    background.fill((0, 0, 0))
     screen.blit(background, (0, 0))
     start_text.change_text(f"Now checking for new songs..")
     start_text.draw()
