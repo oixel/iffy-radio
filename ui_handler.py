@@ -34,33 +34,35 @@ def start() -> None:
         if not os.path.isfile(f"songs/{file_name}.mp3"):
             not_downloaded.append(url)
     
-    download_count = 0
-    start_text.change_text(f"{len(not_downloaded)} out of {len(playlist.video_urls)} songs not downloaded...")
-    status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
-
-    screen.blit(background, (0, 0))
-    
-    start_text.draw()
-    status_text.draw()
-    pygame.display.update()
-
-    for song_url in not_downloaded:
-        file_name = song_url[32:]
-
-        if download_song(song_url, "", "songs/", file_name) == False:
-            status_text.change_text(f"ERROR SONG COULDN'T DOWNLOAD")
-            continue
-        
-        dh = DataHandler(song_url)
-        dh.write_data("", "songs/", file_name)
-
-        download_count += 1
+    # 
+    if len(not_downloaded) != 0:
+        download_count = 0
+        start_text.change_text(f"{len(not_downloaded)} out of {len(playlist.video_urls)} songs not downloaded...")
         status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
 
         screen.blit(background, (0, 0))
+        
         start_text.draw()
         status_text.draw()
         pygame.display.update()
+
+        for song_url in not_downloaded:
+            file_name = song_url[32:]
+
+            if download_song(song_url, "", "songs/", file_name) == False:
+                status_text.change_text(f"ERROR SONG COULDN'T DOWNLOAD")
+                continue
+            
+            dh = DataHandler(song_url)
+            dh.write_data("", "songs/", file_name)
+
+            download_count += 1
+            status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
+
+            screen.blit(background, (0, 0))
+            start_text.draw()
+            status_text.draw()
+            pygame.display.update()
 
     global state
     state = 1
