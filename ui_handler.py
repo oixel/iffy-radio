@@ -11,6 +11,7 @@ SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 #
 def start() -> None:
     playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
+    # playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
     playlist = Playlist(playlist_url)
 
     not_downloaded = []
@@ -41,6 +42,7 @@ def start() -> None:
         dh = DataHandler(song_url)
 
         if download_song(song_url, "", "songs/", file_name) == False:
+            status_text.change_text(f"ERROR SONG COULDN'T DOWNLOAD")
             continue
         
         dh.write_data("", "songs/", file_name)
@@ -102,8 +104,8 @@ if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
     pygame.init()
     pygame.display.set_caption('iffy radio')
-    # screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     # Tracks state to render proper UI elements
     state = 0
