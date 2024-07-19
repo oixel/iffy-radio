@@ -40,8 +40,8 @@ if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
     pygame.init()
     pygame.display.set_caption('iffy radio')
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    # screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     # Hides cursor on start up
     # pygame.mouse.set_visible(False)
