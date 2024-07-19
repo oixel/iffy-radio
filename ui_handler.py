@@ -22,9 +22,11 @@ def start() -> None:
     # 
     playlist_url = f"https://www.youtube.com/playlist?list={read_rfid()}"
 
-    playlist = Playlist(playlist_url)
-    
-    if not playlist:
+    #
+    try:
+        playlist = Playlist(playlist_url)
+        _ = playlist.video_urls[0]
+    except:
         start()
 
     # 

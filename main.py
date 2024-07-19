@@ -13,7 +13,13 @@ SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 def start() -> None:
     #playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
     playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
-    playlist = Playlist(playlist_url)
+    
+    #
+    try:
+        playlist = Playlist(playlist_url)
+        _ = playlist.video_urls[0]
+    except:
+        start()
 
     # 
     background = pygame.Surface(SCREEN_SIZE)
