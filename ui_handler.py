@@ -119,8 +119,12 @@ if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
     pygame.init()
     pygame.display.set_caption('iffy radio')
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    
+    # Sets display to full screen
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+    # Hides cursor on start up
+    pygame.mouse.set_visible(False)
 
     # Tracks state to render proper UI elements
     state = 0
@@ -129,8 +133,6 @@ if __name__ == "__main__":
     queue = []
     track_num = 0
 
-    # Hides cursor on start up
-    # pygame.mouse.set_visible(False)
 
     # Basic variables for test UI
     mid_x, mid_y = screen.get_rect().center
