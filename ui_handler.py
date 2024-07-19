@@ -14,8 +14,18 @@ def start() -> None:
     # playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
     playlist = Playlist(playlist_url)
 
+    # 
+    background = pygame.Surface(SCREEN_SIZE)
+    background.fill((0, 0, 0))
+    screen.blit(background, (0, 0))
+    start_text.change_text(f"Now checking for new songs..")
+    start_text.draw()
+    pygame.display.update()
+    
+    # 
     not_downloaded = []
 
+    # 
     for url in playlist.video_urls:
         file_name = url[32:]
 
@@ -28,8 +38,6 @@ def start() -> None:
     start_text.change_text(f"{len(not_downloaded)} out of {len(playlist.video_urls)} songs not downloaded...")
     status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
 
-    background = pygame.Surface(SCREEN_SIZE)
-    background.fill((0, 0, 0))
     screen.blit(background, (0, 0))
     
     start_text.draw()
