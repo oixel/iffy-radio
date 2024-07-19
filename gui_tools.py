@@ -77,7 +77,8 @@ class Button:
         if self.clicked == True:
             if not pygame.mouse.get_pressed()[0] == 1:
                 # Calls this button's stored function
-                self.function()
+                if self.rect.collidepoint(mouse_pos):
+                    self.function()
 
                 # Resets button's click state to allow it to be clicked again
                 self.clicked = False
