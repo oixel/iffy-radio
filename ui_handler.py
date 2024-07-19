@@ -1,6 +1,7 @@
 import pygame.freetype
 import os
 from pytubefix import Playlist
+from rfid_readerwriter import read_rfid
 from gui_tools import *
 from data_handler import *
 from downloader import *
@@ -10,15 +11,20 @@ SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 
 #
 def start() -> None:
-    playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
-    # playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
-    playlist = Playlist(playlist_url)
-
-    # 
     background = pygame.Surface(SCREEN_SIZE)
     background.fill((0, 0, 0))
     screen.blit(background, (0, 0))
-    start_text.change_text(f"Now checking for new songs..")
+    start_text.change_text("Tap playlist card!")
+    start_text.draw()
+    pygame.display.update()
+
+    playlist_url = read_rfid()
+
+    playlist = Playlist(playlist_url)
+
+    # 
+    screen.blit(background, (0, 0))
+    start_text.change_text("Now checking for new songs..")
     start_text.draw()
     pygame.display.update()
     
