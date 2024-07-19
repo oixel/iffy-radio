@@ -137,7 +137,12 @@ class SongInfo:
         # Updates stored song info
         self.artist = id3['TPE1'].text[0]
         self.song = id3['TIT2'].text[0]
-        self.album = id3['TALB'].text[0]
+        
+        # Only stores an album name if one exists
+        if 'TALB' in id3.keys():
+            self.album = id3['TALB'].text[0]
+        else:
+            self.album = ""
 
         # Loads in new MP3's embedded cover image
         image_data = id3.getall('APIC')[0].data
