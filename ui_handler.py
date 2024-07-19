@@ -19,19 +19,13 @@ def start() -> None:
     start_text.draw()
     pygame.display.update()
 
-    #
-    data = read_rfid()
-    
-    #
-    if data == "quit":
-        global is_running 
-        is_running = False
-        return
-    
     # 
-    playlist_url = f"https://www.youtube.com/playlist?list={data}"
+    playlist_url = f"https://www.youtube.com/playlist?list={read_rfid()}"
 
     playlist = Playlist(playlist_url)
+    
+    if not playlist:
+        start()
 
     # 
     screen.blit(background, (0, 0))
