@@ -1,6 +1,7 @@
 import pygame.freetype
 import os
 from pytubefix import Playlist
+import random
 from rfid_readerwriter import read_rfid
 from gui_tools import *
 from data_handler import *
@@ -35,11 +36,15 @@ def start() -> None:
     for url in playlist.video_urls:
         file_name = url[32:]
 
-        queue.append(f"songs/{file_name}.mp3")
+        start_queue.append(f"songs/{file_name}.mp3")
 
         if not os.path.isfile(f"songs/{file_name}.mp3"):
             not_downloaded.append(url)
     
+    #
+    global queue
+    queue = start_queue
+
     # 
     if len(not_downloaded) != 0:
         download_count = 0
@@ -77,8 +82,19 @@ def start() -> None:
     pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
 
-# Temporary function to be called when 1st test button is pressed
-def test1() -> None:
+# 
+def shuffle() -> None:
+    global queue
+    global start_queue
+
+    # If queue has not been shuffled, shuffle
+    if queue == start_queue:
+        random.shuffle(queue)
+    else:  # Otherwise, unshuffle
+        queue = start_queue
+
+# 
+def back() -> None:
     background = pygame.Surface(SCREEN_SIZE)
     background.fill(pygame.Color('#d184a1'))
     screen.blit(background, (0, 0))
@@ -92,9 +108,8 @@ def test1() -> None:
     pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
     
-
-# Temporary function to be called when 2nd test button is pressed
-def test2() -> None:
+# 
+def skip() -> None:
     background = pygame.Surface(SCREEN_SIZE)
     background.fill(pygame.Color('#d184a1'))
     screen.blit(background, (0, 0))
@@ -130,9 +145,9 @@ if __name__ == "__main__":
     state = 0
 
     #
-    queue = []
+    start_queue = []  # Stores unshuffled queue
+    queue = []  # Stores current queue (shuffled or not)
     track_num = 0
-
 
     # Basic variables for test UI
     mid_x, mid_y = screen.get_rect().center
@@ -147,9 +162,10 @@ if __name__ == "__main__":
     status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
     
     # UI Elements in main state
-    test_button_1 = Button(screen, test1, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
-    test_button_2 = Button(screen, test2, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
+    back_button = Button(screen, back, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
+    skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
+    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), reg_img_path, pressed_img_path)
     
     initial_state = True
 
@@ -173,9 +189,10 @@ if __name__ == "__main__":
             start_text.draw()
             start_button.draw()
         elif state == 1:
-            test_button_1.draw()
-            test_button_2.draw()
+            back_button.draw()
+            skip_button.draw()
             pause_button.draw()
+            shuffle_button.draw()
             song_info.draw()
 
         pygame.display.update()
