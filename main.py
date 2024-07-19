@@ -1,76 +1,168 @@
-import data_handler as DH
+import pygame.freetype
+import os
+from pytubefix import Playlist
+import random
+from gui_tools import *
+from data_handler import *
 from downloader import *
-from renamer import *
-from pytube import Playlist
-import pygame
-import requests
-import io
-from rfid_readerwriter import read_rfid
 
-# PL2fTbjKYTzKd6tTE7Dpzh9Oy5zcctaIm6 <- IGOR
-# PL2fTbjKYTzKd-lCQfahnWHg_QMFyVAeq5 <- iffy
-# Potential custom images using short url ?
+# Default dimensions of touchscreen
+SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 
-# Draws button with given text label at set offset and with set colors
-def draw_button(view, font, text='', x_offset=0, y_offset=0, button_width=80, button_height=35, label_color=(255, 255, 255), button_color = (0, 0, 0)):
-    HEIGHT, WIDTH = 800, 480
+#
+def start() -> None:
+    #playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
+    playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
+    playlist = Playlist(playlist_url)
 
-    # Draw rectangle around button label
-    button = pygame.Rect(WIDTH / 2 - (button_width / 2) + x_offset, HEIGHT / 2 - (button_height / 2) + y_offset,
-                         button_width, button_height)
-    pygame.draw.rect(view, button_color, button)
-
-    # Draw label on top of rectangle
-    label = font.render(text, True, label_color)
-    label_rect = label.get_rect(center=(WIDTH / 2 + x_offset, HEIGHT / 2 + y_offset))
-    view.blit(label, label_rect)
-
-    # Return rectangle to check position
-    return button
-
-def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
-    # Creates a background and fills it with pink
+    # 
     background = pygame.Surface(SCREEN_SIZE)
-    background.fill(pygame.Color('#FFC0CB'))
+    background.fill((0, 0, 0))
     screen.blit(background, (0, 0))
-    is_pink = True
+    start_text.change_text(f"Now checking for new songs..")
+    start_text.draw()
+    pygame.display.update()
     
-    text_surface = pygame.font.Font(None, 24).render("Please Tap a Music Card!", False, (0, 0, 0))
-    screen.blit(text_surface, (WIDTH / 2, HEIGHT / 2))
+    # 
+    not_downloaded = []
 
-    # Updates screen once
-    pygame.display.flip()
-    data = read_rfid()
+    # 
+    for url in playlist.video_urls:
+        file_name = url[32:]
 
+        start_queue.append(f"songs/{file_name}.mp3")
+
+        if not os.path.isfile(f"songs/{file_name}.mp3"):
+            not_downloaded.append(url)
+    
+    #
+    global queue
+    queue = start_queue
+
+    # 
+    if len(not_downloaded) != 0:
+        download_count = 0
+        start_text.change_text(f"{len(not_downloaded)} out of {len(playlist.video_urls)} songs not downloaded...")
+        status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
+
+        screen.blit(background, (0, 0))
+        
+        start_text.draw()
+        status_text.draw()
+        pygame.display.update()
+
+        for song_url in not_downloaded:
+            file_name = song_url[32:]
+
+            if download_song(song_url, "", "songs/", file_name) == False:
+                status_text.change_text(f"ERROR SONG COULDN'T DOWNLOAD")
+                continue
+            
+            dh = DataHandler(song_url)
+            dh.write_data("", "songs/", file_name)
+
+            download_count += 1
+            status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
+
+            screen.blit(background, (0, 0))
+            start_text.draw()
+            status_text.draw()
+            pygame.display.update()
+
+    global state
+    state = 1
+
+    pygame.mixer.init()
+    pygame.mixer.music.load(queue[track_num])
+    pygame.mixer.music.play()
+
+
+def shuffle() -> None:
+    global queue
+    global start_queue
+
+    # If queue has not been shuffled, shuffle
+    if queue == start_queue:
+        random.shuffle(queue)
+    else:  # Otherwise, unshuffle
+        queue = start_queue
+
+
+# 
+def back() -> None:
+    background = pygame.Surface(SCREEN_SIZE)
+    background.fill(pygame.Color('#d184a1'))
     screen.blit(background, (0, 0))
-    text_surface = pygame.font.Font(None, 24).render(data, False, (0, 0, 0))
-    screen.blit(text_surface, (10, 10))
-    button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
-    back_button = draw_button(screen, pygame.font.Font(None, 24), 'BACK')
-    
-    print(data)
-    print(f"Tag size = {len(data)}")
 
-    playlist = Playlist(f'https://www.youtube.com/playlist?list={data}')
+    global track_num
+    track_num = len(queue) - 1 if track_num == 0 else track_num - 1
+
+    song_info.update_data(queue[track_num])
+
+    pygame.mixer.music.pause()
+    pygame.mixer.music.load(queue[track_num])
+    pygame.mixer.music.play()
     
-    # Applies custom cover if iffy is the playlist being played
-    if playlist.title == "iffy":
-        image_source = "https://store-032.blobstore.apple.com/sq-mq-us-032-000002/bb/eb/07/bbeb07d8-f4a6-4574-1540-d367025ddb6b/image?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240706T220734Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=MKIAJC19DXS75RV205ZP%2F20240706%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=c4c1d0f5795ec0c550efc9b7355b14841c389b864c59422ccb1c21949769e6ec"
+
+# 
+def skip() -> None:
+    background = pygame.Surface(SCREEN_SIZE)
+    background.fill(pygame.Color('#d184a1'))
+    screen.blit(background, (0, 0))
+
+    global track_num
+    track_num = 0 if track_num == len(queue) - 1 else track_num + 1
+
+    song_info.update_data(queue[track_num])
+    
+    pygame.mixer.music.pause()
+    pygame.mixer.music.load(queue[track_num])
+    pygame.mixer.music.play()
+
+# Toggles pause on music depending on its current state
+def toggle_pause() -> None:
+    if pygame.mixer.music.get_busy():
+        pygame.mixer.music.pause()
     else:
-        image_source = "https://i.ibb.co/DDKn0JH/starcat.jpg"
-    
-    # Creates image surface from URL
-    req = requests.get(image_source)
-    image = io.BytesIO(req.content)
-    image = pygame.image.load(image).convert()
-    image = pygame.transform.scale(image, (200, 200))
+        pygame.mixer.music.unpause()
 
-    # Renders newly loaded image at center of screen
-    center_pos = (WIDTH / 2 - image.get_width() / 2, HEIGHT / 2 - image.get_height() / 2)
+if __name__ == "__main__":
+    # Creates a fullscreen window named "iffy radio"
+    pygame.init()
+    pygame.display.set_caption('iffy radio')
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-    screen.blit(image, center_pos)
+    # Tracks state to render proper UI elements
+    state = 0
+
+    #
+    start_queue = []  # Stores unshuffled queue
+    queue = []  # Stores current queue (shuffled or not)
+    track_num = 0
+
+    # Hides cursor on start up
+    # pygame.mouse.set_visible(False)
+
+    # Basic variables for test UI
+    mid_x, mid_y = screen.get_rect().center
+    reg_img_path = 'assets/textures/test_button.png'
+    pressed_img_path = 'assets/textures/test_button_pressed.png'
+
+    # UI Elements in start state
+    start_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
+    start_button = Button(screen, start, (mid_x, mid_y + 35), reg_img_path, pressed_img_path)
+
+    # UI Elements in status state
+    status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
     
-    pygame.display.flip()
+    # UI Elements in main state
+    back_button = Button(screen, back, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
+    skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
+    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
+    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), reg_img_path, pressed_img_path)
+    
+    initial_state = True
 
     is_running = True
     while is_running:
@@ -79,50 +171,25 @@ def core(screen, SCREEN_SIZE, WIDTH, HEIGHT) -> None:
                 is_running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    return False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if button.collidepoint(pygame.mouse.get_pos()):
-                    if is_pink:
-                        background.fill(pygame.Color('#008000'))
-                    else:
-                        background.fill(pygame.Color('#FFC0CB'))
-                    
-                    screen.blit(background, (0, 0))
-                    screen.blit(image, center_pos)
-                    screen.blit(text_surface, (10, 10))
-                    button = draw_button(screen, pygame.font.Font(None, 24), 'TEST', x_offset = 160)
-                    back_button = draw_button(screen, pygame.font.Font(None, 24), 'BACK')
-                    pygame.display.flip()
+                    is_running = False
 
-                    is_pink = not is_pink
-                elif back_button.collidepoint(pygame.mouse.get_pos()):
-                    background = pygame.Surface(SCREEN_SIZE)
-                    background.fill(pygame.Color('#FFC0CB'))
-                    return True
+        if state == 1 and initial_state:
+            background = pygame.Surface(SCREEN_SIZE)
+            background.fill(pygame.Color('#d184a1'))
+            screen.blit(background, (0, 0))
+            song_info = SongInfo(screen, queue[0], (mid_x, mid_y - 40))
+            initial_state = False
 
-def main() -> None:
-    # print("Please tap music card!")
-    # data = read_rfid()
-    # print(data)
+        if state == 0:
+            start_text.draw()
+            start_button.draw()
+        elif state == 1:
+            back_button.draw()
+            skip_button.draw()
+            pause_button.draw()
+            shuffle_button.draw()
+            song_info.draw()
 
-    SCREEN_SIZE = WIDTH, HEIGHT = 800, 480
-
-    # Creates a fullscreen window named "iffy radio"
-    pygame.init()
-    pygame.display.set_caption('iffy radio')
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-
-    # Hides cursor on start up
-    pygame.mouse.set_visible(False)
-
-    while True:
-        desire = core(screen, SCREEN_SIZE, WIDTH, HEIGHT)
-        if desire == False:
-            break
-
-    pygame.quit()
+        pygame.display.update()
     
-
-if __name__ == "__main__":
-    main()
+    pygame.quit()
