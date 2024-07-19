@@ -39,12 +39,11 @@ def start() -> None:
     for song_url in not_downloaded:
         file_name = song_url[32:]
 
-        dh = DataHandler(song_url)
-
         if download_song(song_url, "", "songs/", file_name) == False:
             status_text.change_text(f"ERROR SONG COULDN'T DOWNLOAD")
             continue
         
+        dh = DataHandler(song_url)
         dh.write_data("", "songs/", file_name)
 
         download_count += 1
