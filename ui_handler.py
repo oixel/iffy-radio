@@ -18,7 +18,7 @@ def start() -> None:
     start_text.draw()
     pygame.display.update()
 
-    playlist_url = read_rfid()
+    playlist_url = f"https://www.youtube.com/playlist?list={read_rfid()}"
 
     playlist = Playlist(playlist_url)
 
