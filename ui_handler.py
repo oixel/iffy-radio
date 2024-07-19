@@ -43,7 +43,7 @@ def start() -> None:
     
     #
     global queue
-    queue = start_queue
+    queue = start_queue.copy()
 
     # 
     if len(not_downloaded) != 0:
@@ -84,14 +84,19 @@ def start() -> None:
 
 # 
 def shuffle() -> None:
-    global queue
-    global start_queue
+    global start_queue, queue, track_num
 
     # If queue has not been shuffled, shuffle
     if queue == start_queue:
         random.shuffle(queue)
+
+        # Places position in queue to wherever the currently playing song was just moved to
+        track_num = queue.index(start_queue[track_num])
     else:  # Otherwise, unshuffle
-        queue = start_queue
+        # Places position in queue back to currently playing song's regular position in playlist
+        track_num = start_queue.index(queue[track_num])
+
+        queue = start_queue.copy()
 
 # 
 def back() -> None:
