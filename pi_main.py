@@ -93,11 +93,6 @@ def start() -> None:
     pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
 
-# Loops through all ui elements in passed-in list and renders them to screen
-def render(to_render) -> None:
-    for ui_item in to_render:
-        ui_item.draw()
-
 # 
 def shuffle() -> None:
     global start_queue, queue, track_num
@@ -115,7 +110,7 @@ def shuffle() -> None:
         queue = start_queue.copy()
 
 # 
-def previous() -> None:
+def back() -> None:
     background = pygame.Surface(SCREEN_SIZE)
     background.fill(pygame.Color('#d184a1'))
     screen.blit(background, (0, 0))
@@ -178,19 +173,16 @@ if __name__ == "__main__":
     # UI Elements in start state
     start_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
     start_button = Button(screen, start, (mid_x, mid_y + 35), reg_img_path, pressed_img_path)
-    start_ui = [start_text, start_button]
 
     # UI Elements in status state
     status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
     
     # UI Elements in main state
-    previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
+    back_button = Button(screen, back, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
     skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
     shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), reg_img_path, pressed_img_path)
-    player_ui = [previous_button, skip_button, pause_button, shuffle_button]
-
-    #
+    
     initial_state = True
 
     is_running = True
@@ -203,24 +195,21 @@ if __name__ == "__main__":
                     is_running = False
 
         if state == 1 and initial_state:
-            # 
             background = pygame.Surface(SCREEN_SIZE)
             background.fill(pygame.Color('#d184a1'))
             screen.blit(background, (0, 0))
-
-            # 
             song_info = SongInfo(screen, queue[0], (mid_x, mid_y - 40))
-            
-            #
-            player_ui.append(song_info)
-
-            # 
             initial_state = False
 
         if state == 0:
-            render(start_ui)
+            start_text.draw()
+            start_button.draw()
         elif state == 1:
-            render(player_ui)
+            back_button.draw()
+            skip_button.draw()
+            pause_button.draw()
+            shuffle_button.draw()
+            song_info.draw()
 
         pygame.display.update()
     
