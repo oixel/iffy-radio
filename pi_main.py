@@ -130,7 +130,7 @@ def shuffle() -> None:
 
 #
 def load_song() -> None:
-    song_info.update_data(queue[track_num])
+    song_info.change_song(queue[track_num])
     
     paused = not pygame.mixer.music.get_busy()
 
@@ -196,12 +196,13 @@ if __name__ == "__main__":
     status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
     
     # UI Elements in main state
+    song_info = SongInfo(screen, (mid_x, mid_y - 40))
     previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
     skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
     shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), reg_img_path, pressed_img_path)
     back_button = Button(screen, back, (0, 0), reg_img_path, pressed_img_path)
-    player_ui = [background, previous_button, skip_button, pause_button, shuffle_button, back_button]
+    player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
 
     #
     initial_state = True
@@ -220,10 +221,7 @@ if __name__ == "__main__":
             background.change_color('#d184a1')
 
             # 
-            song_info = SongInfo(screen, queue[0], (mid_x, mid_y - 40))
-            
-            #
-            player_ui.append(song_info)
+            song_info.change_song(queue[0])
 
             # 
             initial_state = False
