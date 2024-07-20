@@ -13,13 +13,9 @@ SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 def start() -> None:
     #playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
     playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
-
-    background = pygame.Surface(SCREEN_SIZE)
-    background.fill((0, 0, 0))
-    screen.blit(background, (0, 0))
+    
     start_text.change_text("Verifying playlist...")
-    start_text.draw()
-    pygame.display.update()
+    render([background, start_text])
 
     #
     try:
@@ -29,10 +25,8 @@ def start() -> None:
         start()
 
     # 
-    screen.blit(background, (0, 0))
     start_text.change_text(f"Now checking for new songs..")
-    start_text.draw()
-    pygame.display.update()
+    render([background, start_text])
     
     # 
     not_downloaded = []
@@ -55,12 +49,7 @@ def start() -> None:
         download_count = 0
         start_text.change_text(f"{len(not_downloaded)} out of {len(playlist.video_urls)} songs not downloaded...")
         status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
-
-        screen.blit(background, (0, 0))
-        
-        start_text.draw()
-        status_text.draw()
-        pygame.display.update()
+        render([background, start_text, status_text])
 
         for song_url in not_downloaded:
             file_name = song_url[32:]
@@ -75,10 +64,7 @@ def start() -> None:
             download_count += 1
             status_text.change_text(f"{download_count}/{len(not_downloaded)} downloaded!")
 
-            screen.blit(background, (0, 0))
-            start_text.draw()
-            status_text.draw()
-            pygame.display.update()
+            render([background, start_text, status_text])
 
     global state
     state = 1
@@ -91,6 +77,30 @@ def start() -> None:
 def render(to_render) -> None:
     for ui_item in to_render:
         ui_item.draw()
+    
+    pygame.display.update()
+
+#
+def back() -> None:
+    global state, start_queue, queue, track_num, initial_state
+
+    # Resets all values of queue
+    state = 0
+    start_queue = [] 
+    queue = []
+    track_num = 0
+
+    #
+    initial_state = True
+
+    #
+    pygame.mixer.music.stop()
+    pygame.mixer.quit()
+
+    #
+    background.change_color((0, 0, 0))
+    start_text.change_text("Press Button to Start")
+    render(start_ui)
 
 #
 def shuffle() -> None:
@@ -110,10 +120,6 @@ def shuffle() -> None:
 
 # 
 def previous() -> None:
-    background = pygame.Surface(SCREEN_SIZE)
-    background.fill(pygame.Color('#d184a1'))
-    screen.blit(background, (0, 0))
-
     global track_num
     track_num = len(queue) - 1 if track_num == 0 else track_num - 1
 
@@ -125,10 +131,6 @@ def previous() -> None:
     
 # 
 def skip() -> None:
-    background = pygame.Surface(SCREEN_SIZE)
-    background.fill(pygame.Color('#d184a1'))
-    screen.blit(background, (0, 0))
-
     global track_num
     track_num = 0 if track_num == len(queue) - 1 else track_num + 1
 
@@ -164,10 +166,13 @@ if __name__ == "__main__":
     reg_img_path = 'assets/textures/test_button.png'
     pressed_img_path = 'assets/textures/test_button_pressed.png'
 
+    #
+    background = Background(screen, (0, 0, 0))
+
     # UI Elements in start state
     start_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
     start_button = Button(screen, start, (mid_x, mid_y + 35), reg_img_path, pressed_img_path)
-    start_ui = [start_text, start_button]
+    start_ui = [background, start_text, start_button]
 
     # UI Elements in status state
     status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
@@ -177,7 +182,8 @@ if __name__ == "__main__":
     skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
     shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), reg_img_path, pressed_img_path)
-    player_ui = [previous_button, skip_button, pause_button, shuffle_button]
+    back_button = Button(screen, back, (0, 0), reg_img_path, pressed_img_path)
+    player_ui = [background, previous_button, skip_button, pause_button, shuffle_button, back_button]
 
     #
     initial_state = True
@@ -193,9 +199,7 @@ if __name__ == "__main__":
 
         if state == 1 and initial_state:
             #
-            background = pygame.Surface(SCREEN_SIZE)
-            background.fill(pygame.Color('#d184a1'))
-            screen.blit(background, (0, 0))
+            background.change_color('#d184a1')
             
             #
             song_info = SongInfo(screen, queue[0], (mid_x, mid_y - 40))
@@ -210,7 +214,5 @@ if __name__ == "__main__":
             render(start_ui)
         elif state == 1:
             render(player_ui)
-
-        pygame.display.update()
     
     pygame.quit()
