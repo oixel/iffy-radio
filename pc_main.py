@@ -103,6 +103,11 @@ def back() -> None:
     render(start_ui)
 
 #
+def exit() -> None:
+    global is_running
+    is_running = False
+
+#
 def shuffle() -> None:
     global start_queue, queue, track_num
 
@@ -172,7 +177,8 @@ if __name__ == "__main__":
     # UI Elements in start state
     start_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
     start_button = Button(screen, start, (mid_x, mid_y + 35), reg_img_path, pressed_img_path)
-    start_ui = [background, start_text, start_button]
+    exit_button = Button(screen, exit, (0, 0), reg_img_path, pressed_img_path)
+    start_ui = [background, start_text, start_button, exit_button]
 
     # UI Elements in status state
     status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
