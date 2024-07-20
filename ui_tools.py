@@ -2,6 +2,22 @@ import pygame
 from mutagen.id3 import ID3
 from io import BytesIO
 
+#
+class Background:
+    def __init__(self, screen, color, position = (0, 0)) -> None:
+        self.screen = screen
+        self.position = position
+
+        self.surface = pygame.Surface(screen.get_size())
+        self.surface.fill(pygame.Color(color))
+
+    def change_color(self, color) -> None:
+        self.surface.fill(pygame.Color(color))
+
+    def draw(self) -> None:
+        self.screen.blit(self.surface, self.position)
+
+
 # Handles creation of text objects
 class Text:
     def __init__(self, screen, font_path, size, text, color, position) -> None:
