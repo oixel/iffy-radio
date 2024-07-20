@@ -7,6 +7,8 @@ def fix_unicode(string) -> str:
         string = string.replace("\\", "").replace("u003c", "<")
     if '\\"' in string:
         string = string.replace("\\", "")
+    if '‚Äô' in string:
+        string = string.replace("‚Äô", "'")
     
     return string
 
