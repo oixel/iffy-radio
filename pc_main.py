@@ -123,27 +123,29 @@ def shuffle() -> None:
 
         queue = start_queue.copy()
 
+#
+def load_song() -> None:
+    song_info.update_data(queue[track_num])
+    
+    paused = not pygame.mixer.music.get_busy()
+
+    pygame.mixer.music.load(queue[track_num])
+    pygame.mixer.music.play()
+
+    if paused:
+        pygame.mixer.music.pause()
+
 # 
 def previous() -> None:
     global track_num
     track_num = len(queue) - 1 if track_num == 0 else track_num - 1
-
-    song_info.update_data(queue[track_num])
-
-    pygame.mixer.music.pause()
-    pygame.mixer.music.load(queue[track_num])
-    pygame.mixer.music.play()
+    load_song()
     
 # 
 def skip() -> None:
     global track_num
     track_num = 0 if track_num == len(queue) - 1 else track_num + 1
-
-    song_info.update_data(queue[track_num])
-    
-    pygame.mixer.music.pause()
-    pygame.mixer.music.load(queue[track_num])
-    pygame.mixer.music.play()
+    load_song()
 
 # Toggles pause on music depending on its current state
 def toggle_pause() -> None:
