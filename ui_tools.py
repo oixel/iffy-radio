@@ -110,34 +110,17 @@ class SongInfo:
     # Constant storing the size of cover art image
     IMAGE_SIZE = (150, 150)
 
-    def __init__(self, screen, mp3_path, position) -> None:
+    def __init__(self, screen, position) -> None:
         # Stores parameterized screen as object's screen
         self.screen = screen
 
-        # Creates ID3 tags object from MP3 at given path
-        id3 = ID3(mp3_path)
+        # 
+        self.position = position
 
-        # Stores MP3's ID3 tag info
-        self.artist = id3['TPE1'].text[0]
-        self.song = id3['TIT2'].text[0]
-        self.album = id3['TALB'].text[0]
-        
-        # Loads in embedded cover art as byte data
-        image_data = id3.getall('APIC')[0].data
-        image = BytesIO(image_data)
-
-        # Creates image square from embedded image data
-        image = pygame.image.load(image).convert_alpha()
-        self.cover_image = pygame.transform.scale(image, self.IMAGE_SIZE)
-
-        # Creates a rect from the loaded image
-        self.rect = self.cover_image.get_rect()
-
-        # Stores where cover is positioned
-        self.cover_position = position
-
-        # Positions button's rect's center at calculated position
-        self.rect.center =  position
+        # Creates empty song info to change when a new song is played
+        self.artist = ""
+        self.song = ""
+        self.album = ""
 
         artist_text_pos = (position[0], position[1] - 125)
         self.artist_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 16, self.artist, (255, 255, 255), artist_text_pos)
@@ -146,7 +129,7 @@ class SongInfo:
         self.song_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, self.song, (255, 255, 255), song_text_pos)
     
     # Takes in a new MP3 and updates stored song data
-    def update_data(self, mp3_path) -> None:
+    def change_song(self, mp3_path) -> None:
         # Creates ID3 tags from new MP3
         id3 = ID3(mp3_path)
 
@@ -168,7 +151,7 @@ class SongInfo:
         image = pygame.image.load(image).convert_alpha()
         self.cover_image = pygame.transform.scale(image, self.IMAGE_SIZE)
         self.rect = self.cover_image.get_rect()
-        self.rect.center =  self.cover_position
+        self.rect.center =  self.position
 
         # Updates song info to new song
         self.artist_text.change_text(self.artist)
