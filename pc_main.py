@@ -2,7 +2,7 @@ import pygame.freetype
 import os
 from pytubefix import Playlist
 import random
-from gui_tools import *
+from ui_tools import *
 from data_handler import *
 from downloader import *
 
