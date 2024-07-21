@@ -232,10 +232,10 @@ if __name__ == "__main__":
         if state == 0:
             render(start_ui)
         elif state == 1:
-            render(player_ui)
-
             # If the song is not paused and not playing anymore, then the song is over
             if not paused and not pygame.mixer.music.get_busy():
                 skip()
+
+            render(player_ui)
     
     pygame.quit()
