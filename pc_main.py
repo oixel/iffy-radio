@@ -126,8 +126,6 @@ def shuffle() -> None:
 #
 def load_song() -> None:
     song_info.change_song(queue[track_num])
-    
-    paused = not pygame.mixer.music.get_busy()
 
     pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
@@ -149,10 +147,14 @@ def skip() -> None:
 
 # Toggles pause on music depending on its current state
 def toggle_pause() -> None:
-    if pygame.mixer.music.get_busy():
-        pygame.mixer.music.pause()
-    else:
+    global paused
+
+    if paused:
         pygame.mixer.music.unpause()
+    else:
+        pygame.mixer.music.pause()
+
+    paused = not paused
 
 if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
@@ -167,6 +169,7 @@ if __name__ == "__main__":
     start_queue = []  # Stores unshuffled queue
     queue = []  # Stores current queue (shuffled or not)
     track_num = 0
+    paused = False
 
     # Basic variables for test UI
     mid_x, mid_y = screen.get_rect().center
@@ -220,5 +223,9 @@ if __name__ == "__main__":
             render(start_ui)
         elif state == 1:
             render(player_ui)
-    
+
+            # If the song is not paused and not playing anymore, then the song is over
+            if not paused and not pygame.mixer.music.get_busy():
+                skip()
+
     pygame.quit()
