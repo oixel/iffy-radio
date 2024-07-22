@@ -196,7 +196,9 @@ class ProgressBar:
         # Sets initial values for variables used in incrementation and scrubbing
         self.increment = 0
         self.paused = False
+        self.first_click_occurred = False
         self.clicked = False
+        self.scrubbing = False
 
         # Stores the width that occurs from any alterations of the progress (pause or scrubbing)
         # In order to increment from it rather than the progress bar's start width of 0
@@ -260,47 +262,54 @@ class ProgressBar:
     def handle_scrubbing(self) -> None:
         mouse_pos = pygame.mouse.get_pos()
 
-        if self.back_rect.collidepoint(mouse_pos):
-            if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
+        # Ensures that progress bar only gets altered when it was clicked directly
+        if pygame.mouse.get_pressed()[0] == 1 and not self.first_click_occurred:
+            # Makes it so this check is only called on the first frame of mouse being down
+            self.first_click_occurred = True
+
+            # If progress bar was clicked on the first frame that mouse was pressed down, then it is clicked
+            if self.back_rect.collidepoint(mouse_pos):
                 self.clicked = True
+        
+        # Only called if progress bar is clicked initially
+        if self.clicked:
+            self.scrubbing = True
 
-                self.progress_rect.width = mouse_pos[0] - self.back_rect.bottomleft[0]
-                if self.progress_rect.width > self.back_rect.width:
-                    self.progress_rect.width = self.back_rect.width
+            # Updates progress bar's width to match mouse's position
+            width = mouse_pos[0] - self.back_rect.bottomleft[0]
 
-                self.progress_rect.left = self.back_rect.left
-                self.progress_rect.centery = self.back_rect.centery
+            # Stores maximum possible width as that of the background rectangle
+            MAX_WIDTH = self.back_rect.width
+            
+            # Clamps width between 0 and the dimensions of the background rectangles
+            if width < 0:
+                width = 0
+            elif width > MAX_WIDTH:
+                width = MAX_WIDTH
+            
+            # Updates progress rectangles width to match mouse position (in range of clamp)
+            self.progress_rect.width = width
 
+            # Ensures that left side of progress bar lines up to that of the background
+            self.progress_rect.left = self.back_rect.left
+            self.progress_rect.centery = self.back_rect.centery
+
+            # Updates song position only when mouse is released
+            if not pygame.mouse.get_pressed()[0] == 1:
                 # Reset epoch and update stored width
                 self.reset_epoch()
 
                 # Calculates the new position in song (in format of seconds) and sets it in the player
-                song_position = self.progress_rect.width / self.increment
+                song_position = self.progress_rect.width / self.increment      
                 pygame.mixer.music.set_pos(song_position)
 
-                #self.scrub_start = time()
-        
-        # 
-        if self.clicked == True:
-            #if time() - self.scrub_start > 1:
-                #print("Dragging!")
-            
-            # Resets click when mouse is released
-            if not pygame.mouse.get_pressed()[0] == 1:
+                # Resets states back to normal
                 self.clicked = False
-
-    # Here is how to make the bar follow the mouse
-    # def follow_mouse(self) -> None:
-    #     mouse_pos = pygame.mouse.get_pos()
-
-    #     self.progress_rect.width = mouse_pos[0] - self.back_rect.bottomleft[0]
-    #     if self.progress_rect.width > self.back_rect.width:
-    #         self.progress_rect.width = self.back_rect.width
-
-    #     self.progress_rect.left = self.back_rect.left
-    #     self.progress_rect.centery = self.back_rect.centery
-    #     To get time when let go, do something like width / self.increment
-    #     Then update time and everything
+                self.scrubbing = False
+        
+        # Called when mouse was released: resets state of first click occurring
+        if not pygame.mouse.get_pressed()[0] == 1 and self.first_click_occurred:
+            self.first_click_occurred = False
 
     # Renders background bar and progress bar to the screen
     def draw(self) -> None:
@@ -308,7 +317,7 @@ class ProgressBar:
         pygame.draw.rect(self.screen, self.back_color, self.back_rect)
 
         # Only increases bar if song is actively playing
-        if self.increment != 0 and not self.paused:
+        if self.increment != 0 and not self.paused and not self.scrubbing:
             self.increment_bar()
         
         # Renders progress rectangle to screen
