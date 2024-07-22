@@ -156,6 +156,9 @@ def toggle_pause() -> None:
 
     paused = not paused
 
+    # Updates paused state of progress bar
+    song_info.change_pause(paused)
+
 if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
     pygame.init()
@@ -189,7 +192,7 @@ if __name__ == "__main__":
     status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
     
     # UI Elements in main state
-    song_info = SongInfo(screen, (mid_x, mid_y - 40))
+    song_info = SongInfo(screen, (mid_x, mid_y - 60))
     previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
     skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
