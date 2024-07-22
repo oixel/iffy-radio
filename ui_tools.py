@@ -323,10 +323,10 @@ class ProgressBar:
 
     # Applies alpha values to hidden click box that provides extra space to click the progress bar
     def draw_click_box(self, alpha = 0):
-        click_surf = pygame.Surface(pygame.Rect(self.click_rect).size, pygame.SRCALPHA)
-        click_surf.set_alpha(alpha)
-        pygame.draw.rect(click_surf, (0, 255, 0), click_surf.get_rect())
-        self.screen.blit(click_surf, self.click_rect)
+        click_surface = pygame.Surface(pygame.Rect(self.click_rect).size, pygame.SRCALPHA)
+        click_surface.set_alpha(alpha)
+        pygame.draw.rect(click_surface, (0, 255, 0), click_surface.get_rect())
+        self.screen.blit(click_surface, self.click_rect)
 
     # Renders background bar and progress bar to the screen
     def draw(self) -> None:
