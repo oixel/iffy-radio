@@ -204,9 +204,8 @@ class ProgressBar:
         # Sets initial values for variables used in incrementation and scrubbing
         self.increment = 0
         self.paused = False
-        self.clicked = False  # Only gets set to true if it is clicked on first frame of mouse being pressed down
         self.first_click_occurred = False
-        self.scrubbing = False
+        self.scrubbing = False  # Only gets set to true if it is clicked on first frame of mouse being pressed down
 
         # Stores the width that occurs from any alterations of the progress (pause or scrubbing)
         # In order to increment from it rather than the progress bar's start width of 0
@@ -277,12 +276,10 @@ class ProgressBar:
 
             # If progress bar was clicked on the first frame that mouse was pressed down, then it is clicked
             if self.back_rect.collidepoint(mouse_pos):
-                self.clicked = True
+                self.scrubbing = True
         
         # Only called if progress bar is clicked initially
-        if self.clicked:
-            self.scrubbing = True
-
+        if self.scrubbing:
             # Updates progress bar's width to match mouse's position
             width = mouse_pos[0] - self.back_rect.bottomleft[0]
 
@@ -312,7 +309,6 @@ class ProgressBar:
                 pygame.mixer.music.set_pos(song_position)
 
                 # Resets states back to normal
-                self.clicked = False
                 self.scrubbing = False
         
         # Called when mouse was released: Resets state of first click occurring
