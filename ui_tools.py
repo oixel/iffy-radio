@@ -74,27 +74,31 @@ class Button:
         # Assigns the function that is called when button is pressed
         self.function = function
 
-        # Ensures that button can be clicked from its initialization
+        # Clicked is only set true if the button is clicked on the first frame of the mouse button being pressed
         self.clicked = False
+        self.first_click_occurred = False
         
     # Draws button onto the screen and handles function calling on button press
     def draw(self) -> None:
         mouse_pos = pygame.mouse.get_pos()
 
-        # Changes button's clicked state and updates image
-        if self.rect.collidepoint(mouse_pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                # Ensures that button's click functionality only runs once
-                self.clicked = True
+        # Ensures that button only gets clicked when it was clicked directly
+        if pygame.mouse.get_pressed()[0] == 1 and not self.first_click_occurred:
+            # Makes it so this check is only called on the first frame mouse being pressed down
+            self.first_click_occurred = True
 
-                # Sets button's image to its pressed variant (if it exists)
-                if self.pressed_image != None:
-                    self.image = self.pressed_image
-        
+            # If button was clicked on the first frame of mouse button being pressed, then it was actually clicked
+            if self.rect.collidepoint(mouse_pos):
+                self.clicked = True
+                
         # Calls function and resets unpressed boolean when mouse is no longer being pressed down and 
         if self.clicked == True:
+            # Sets button's image to its pressed variant (if it exists)
+            if self.pressed_image != None and self.image != self.pressed_image:
+                self.image = self.pressed_image
+        
             if not pygame.mouse.get_pressed()[0] == 1:
-                # Calls this button's stored function
+                # Calls this button's stored function if mouse is still over the button on release
                 if self.rect.collidepoint(mouse_pos):
                     self.function()
 
@@ -104,6 +108,10 @@ class Button:
                 # Resets button's image to its unpressed variant
                 self.image = self.regular_image
         
+        # Called when mouse was released: resets state of first click occurring
+        if not pygame.mouse.get_pressed()[0] == 1 and self.first_click_occurred:
+            self.first_click_occurred = False
+
         # Draws button's current image onto screen at its stored position
         self.screen.blit(self.image, self.rect)
 
@@ -196,8 +204,8 @@ class ProgressBar:
         # Sets initial values for variables used in incrementation and scrubbing
         self.increment = 0
         self.paused = False
+        self.clicked = False  # Only gets set to true if it is clicked on first frame of mouse being pressed down
         self.first_click_occurred = False
-        self.clicked = False
         self.scrubbing = False
 
         # Stores the width that occurs from any alterations of the progress (pause or scrubbing)
@@ -264,7 +272,7 @@ class ProgressBar:
 
         # Ensures that progress bar only gets altered when it was clicked directly
         if pygame.mouse.get_pressed()[0] == 1 and not self.first_click_occurred:
-            # Makes it so this check is only called on the first frame of mouse being down
+            # Makes it so this check is only called on the first frame of mouse being pressed down
             self.first_click_occurred = True
 
             # If progress bar was clicked on the first frame that mouse was pressed down, then it is clicked
@@ -307,7 +315,7 @@ class ProgressBar:
                 self.clicked = False
                 self.scrubbing = False
         
-        # Called when mouse was released: resets state of first click occurring
+        # Called when mouse was released: Resets state of first click occurring
         if not pygame.mouse.get_pressed()[0] == 1 and self.first_click_occurred:
             self.first_click_occurred = False
 
