@@ -1,6 +1,8 @@
 import pygame
 from mutagen.id3 import ID3
+from mutagen.mp3 import MP3
 from io import BytesIO
+from time import time
 
 #
 class Background:
@@ -114,19 +116,25 @@ class SongInfo:
         # Stores parameterized screen as object's screen
         self.screen = screen
 
-        # 
+        # Stores position of cover art's center which is used in referenced by the positions of everything else
         self.position = position
 
         # Creates empty song info to change when a new song is played
         self.artist = ""
         self.song = ""
         self.album = ""
-
+        self.length = 0
+        
+        # Initializes text stating artist's name
         artist_text_pos = (position[0], position[1] - 125)
         self.artist_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 16, self.artist, (255, 255, 255), artist_text_pos)
 
+        # Intiailizes text stating song's name
         song_text_pos = (position[0], position[1] - 100)
         self.song_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, self.song, (255, 255, 255), song_text_pos)
+
+        # Initializes progress bar
+        self.progress_bar = ProgressBar(screen, (position[0], position[1] + 85))
     
     # Takes in a new MP3 and updates stored song data
     def change_song(self, mp3_path) -> None:
@@ -142,6 +150,10 @@ class SongInfo:
             self.album = id3['TALB'].text[0]
         else:
             self.album = ""
+        
+        # Stores songs length in seconds and updates how much the progress bar should increment every second
+        self.length = MP3(mp3_path).info.length
+        self.progress_bar.reset(self.length)
 
         # Loads in new MP3's embedded cover image
         image_data = id3.getall('APIC')[0].data
@@ -157,8 +169,88 @@ class SongInfo:
         self.artist_text.change_text(self.artist)
         self.song_text.change_text(self.song)
 
+    # Changes paused state of progress bar when pause button is pressed
+    def change_pause(self, paused) -> None:
+        self.progress_bar.change_pause(paused)
+
     # Renders song information onto screen
     def draw(self) -> None:
         self.screen.blit(self.cover_image, self.rect)
         self.artist_text.draw()
         self.song_text.draw()
+        self.progress_bar.draw()
+
+class ProgressBar:
+    def __init__(self, screen, position) -> None:
+        # Initializes default attributes of progress bar
+        BAR_SIZE = (200, 10)
+        back_color = (0, 0, 0)
+        self.playing_color = (255, 0, 0)
+        self.paused_color = (90, 90, 90)
+        progress_color = self.playing_color
+
+        # Stores basic variables depending on parameters
+        self.screen = screen
+        self.position = position
+
+        # Set values for variables used in incrementation
+        self.increment = 0
+        self.paused = False
+        self.time_spent_paused = 0
+
+        # Creates background rectangle at center of screen, under cover art
+        self.back_rect = pygame.Rect((0, 0), BAR_SIZE)
+        self.back_color = back_color
+        self.back_rect.center = position
+
+        # Initializes progress rectangle with the same height as the background rectangle
+        self.progress_rect = pygame.Rect((0, 0), (0, BAR_SIZE[1]))
+        self.progress_color = progress_color
+        self.progress_rect.left = self.back_rect.left
+        self.progress_rect.centery = self.back_rect.centery
+    
+    # Toggles paused state of progress bar and ensures time spent paused does not get added to total time
+    def change_pause(self, paused) -> None:
+        # Stores new paused state
+        self.paused = paused
+        
+        # If now paused, store the time when the paused start
+        if paused:
+            self.pause_start_epoch = time()
+            
+            # Change progress bar's color to reflect being paused
+            self.progress_color = self.paused_color
+        else:  # Otherwise, if now unpaused, add time spent paused to stored variable
+            self.time_spent_paused += time() - self.pause_start_epoch
+
+            # Change progress bar's color to reflect playing
+            self.progress_color = self.playing_color
+
+    # Resets start time to current time and calculates the new increment for each second
+    def reset(self, song_length) -> None:
+        # Calculate increment by dividing background rect's width / seconds of song
+        self.start_epoch = time()
+        self.time_spent_paused = 0
+        self.increment = self.back_rect.width / song_length
+
+    # Makes the bar's right side move to the right as the song goes on
+    def increment_bar(self) -> None:
+        # Increments the progress bar every second not spent paused
+        seconds = time() - self.start_epoch - self.time_spent_paused
+        self.progress_rect.width = self.increment * seconds
+
+        # Resets progress bar's left side to left of background bar so only the right side moves
+        self.progress_rect.left = self.back_rect.left
+        self.progress_rect.centery = self.back_rect.centery
+
+    # Renders background bar and progress bar to the screen
+    def draw(self) -> None:
+        # Renders background rectangle behind progress rectangle
+        pygame.draw.rect(self.screen, self.back_color, self.back_rect)
+
+        # Only increases bar if song is actively playing
+        if self.increment != 0 and self.paused == False:
+            self.increment_bar()
+        
+        # Renders progress rectangle to screen
+        pygame.draw.rect(self.screen, self.progress_color, self.progress_rect)
