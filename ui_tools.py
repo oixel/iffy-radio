@@ -203,6 +203,8 @@ class ProgressBar:
         self.position = position
 
         # Sets initial values for variables used in incrementation and scrubbing
+        self.song_length = 0
+        self.song_position = 0
         self.increment = 0
         self.paused = False
         self.first_click_occurred = False
@@ -252,6 +254,7 @@ class ProgressBar:
     # Resets start time to current time and calculates the new increment for each second
     def reset(self, song_length) -> None:
         # Calculate increment by dividing background rect's width / seconds of song
+        self.song_length = song_length
         self.epoch = time()
         self.increment = self.back_rect.width / song_length
         
@@ -305,6 +308,7 @@ class ProgressBar:
             self.progress_rect.left = self.back_rect.left
             self.progress_rect.centery = self.back_rect.centery
 
+
             # Updates song position only when mouse is released
             if not pygame.mouse.get_pressed()[0] == 1:
                 # Reset epoch and update stored width
@@ -330,6 +334,9 @@ class ProgressBar:
 
     # Renders background bar and progress bar to the screen
     def draw(self) -> None:
+        self.song_position = self.progress_rect.width / self.increment
+        self.print_times()
+
         # Renders background rectangle behind progress rectangle
         pygame.draw.rect(self.screen, self.back_color, self.back_rect)
         
@@ -345,3 +352,17 @@ class ProgressBar:
 
         # Handles functionality for scrubbing through song by clicking progress bar
         self.handle_scrubbing()
+    
+    # TEMPORARY
+    def print_times(self) -> None:
+        cur_pos = self.song_position
+        cur_times = (round(cur_pos // 60), round(cur_pos % 60))
+        zero_1 = "0" if cur_times[1] < 10 else ""
+        time_passed = f"{cur_times[0]}:{zero_1}{cur_times[1]}"
+
+        total = self.song_length
+        end_times = (round(total // 60), round(total % 60))
+        zero_2 = "0" if end_times[1] < 10 else ""
+        end_time = f"{end_times[0]}:{zero_2}{end_times[1]}"
+
+        print(f"{time_passed} / {end_time}")
