@@ -193,10 +193,14 @@ class ProgressBar:
         self.screen = screen
         self.position = position
 
-        # Set values for variables used in incrementation
+        # Sets initial values for variables used in incrementation and scrubbing
         self.increment = 0
         self.paused = False
-        self.time_spent_paused = 0
+        self.clicked = False
+
+        # Stores the width that occurs from any alterations of the progress (pause or scrubbing)
+        # In order to increment from it rather than the progress bar's start width of 0
+        self.stored_width = 0  
 
         # Creates background rectangle at center of screen, under cover art
         self.back_rect = pygame.Rect((0, 0), BAR_SIZE)
@@ -209,19 +213,23 @@ class ProgressBar:
         self.progress_rect.left = self.back_rect.left
         self.progress_rect.centery = self.back_rect.centery
     
+    # Resetting the epoch ensures all incrementations occur on top of any alterations (pausing or scrubbing)
+    # Basically, ensures time is synced from the point after a pause or after scrubbing through the song
+    def reset_epoch(self) -> None:
+        self.epoch = time()
+        self.stored_width = self.progress_rect.width
+
     # Toggles paused state of progress bar and ensures time spent paused does not get added to total time
     def change_pause(self, paused) -> None:
         # Stores new paused state
         self.paused = paused
         
-        # If now paused, store the time when the paused start
+        # If now paused, change progress bar's color to reflect it
         if paused:
-            self.pause_start_epoch = time()
-            
-            # Change progress bar's color to reflect being paused
             self.progress_color = self.paused_color
-        else:  # Otherwise, if now unpaused, add time spent paused to stored variable
-            self.time_spent_paused += time() - self.pause_start_epoch
+        else:  # Otherwise, if just unpaused
+            # Reset epoch and update stored width
+            self.reset_epoch()
 
             # Change progress bar's color to reflect playing
             self.progress_color = self.playing_color
@@ -229,19 +237,70 @@ class ProgressBar:
     # Resets start time to current time and calculates the new increment for each second
     def reset(self, song_length) -> None:
         # Calculate increment by dividing background rect's width / seconds of song
-        self.start_epoch = time()
-        self.time_spent_paused = 0
+        self.epoch = time()
         self.increment = self.back_rect.width / song_length
+        
+        # Reset progress rect's width since a new song is playing from 0
+        self.progress_rect.width = 0
+
+        # Reset stored width, since new song has not been altered in any way
+        self.stored_width = 0
 
     # Makes the bar's right side move to the right as the song goes on
     def increment_bar(self) -> None:
-        # Increments the progress bar every second not spent paused
-        seconds = time() - self.start_epoch - self.time_spent_paused
-        self.progress_rect.width = self.increment * seconds
+        # Increments the progress bar every second while playing
+        seconds = time() - self.epoch
+        self.progress_rect.width = self.stored_width + (self.increment * seconds)
 
         # Resets progress bar's left side to left of background bar so only the right side moves
         self.progress_rect.left = self.back_rect.left
         self.progress_rect.centery = self.back_rect.centery
+
+    # Handles all functionality related to clicking / dragging through song
+    def handle_scrubbing(self) -> None:
+        mouse_pos = pygame.mouse.get_pos()
+
+        if self.back_rect.collidepoint(mouse_pos):
+            if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
+                self.clicked = True
+
+                self.progress_rect.width = mouse_pos[0] - self.back_rect.bottomleft[0]
+                if self.progress_rect.width > self.back_rect.width:
+                    self.progress_rect.width = self.back_rect.width
+
+                self.progress_rect.left = self.back_rect.left
+                self.progress_rect.centery = self.back_rect.centery
+
+                # Reset epoch and update stored width
+                self.reset_epoch()
+
+                # Calculates the new position in song (in format of seconds) and sets it in the player
+                song_position = self.progress_rect.width / self.increment
+                pygame.mixer.music.set_pos(song_position)
+
+                #self.scrub_start = time()
+        
+        # 
+        if self.clicked == True:
+            #if time() - self.scrub_start > 1:
+                #print("Dragging!")
+            
+            # Resets click when mouse is released
+            if not pygame.mouse.get_pressed()[0] == 1:
+                self.clicked = False
+
+    # Here is how to make the bar follow the mouse
+    # def follow_mouse(self) -> None:
+    #     mouse_pos = pygame.mouse.get_pos()
+
+    #     self.progress_rect.width = mouse_pos[0] - self.back_rect.bottomleft[0]
+    #     if self.progress_rect.width > self.back_rect.width:
+    #         self.progress_rect.width = self.back_rect.width
+
+    #     self.progress_rect.left = self.back_rect.left
+    #     self.progress_rect.centery = self.back_rect.centery
+    #     To get time when let go, do something like width / self.increment
+    #     Then update time and everything
 
     # Renders background bar and progress bar to the screen
     def draw(self) -> None:
@@ -249,8 +308,11 @@ class ProgressBar:
         pygame.draw.rect(self.screen, self.back_color, self.back_rect)
 
         # Only increases bar if song is actively playing
-        if self.increment != 0 and self.paused == False:
+        if self.increment != 0 and not self.paused:
             self.increment_bar()
         
         # Renders progress rectangle to screen
         pygame.draw.rect(self.screen, self.progress_color, self.progress_rect)
+
+        # Handles functionality for scrubbing through song by clicking progress bar
+        self.handle_scrubbing()
