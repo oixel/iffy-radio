@@ -192,8 +192,9 @@ class ProgressBar:
     def __init__(self, screen, position) -> None:
         # Initializes default attributes of progress bar
         BAR_SIZE = (200, 10)
+        CLICK_SAFETY = 20
         back_color = (0, 0, 0)
-        self.playing_color = (255, 0, 0)
+        self.playing_color = (255, 0, 0, 0)
         self.paused_color = (90, 90, 90)
         progress_color = self.playing_color
 
@@ -215,6 +216,11 @@ class ProgressBar:
         self.back_rect = pygame.Rect((0, 0), BAR_SIZE)
         self.back_color = back_color
         self.back_rect.center = position
+
+        # Creates invisible rectangle that makes clicking progress bar more comfortable on the small touch screen
+        safety_size = (BAR_SIZE[0] + CLICK_SAFETY, BAR_SIZE[1] + CLICK_SAFETY)
+        self.click_rect = pygame.Rect((0, 0), safety_size)
+        self.click_rect.center = position
 
         # Initializes progress rectangle with the same height as the background rectangle
         self.progress_rect = pygame.Rect((0, 0), (0, BAR_SIZE[1]))
@@ -275,7 +281,7 @@ class ProgressBar:
             self.first_click_occurred = True
 
             # If progress bar was clicked on the first frame that mouse was pressed down, then it is clicked
-            if self.back_rect.collidepoint(mouse_pos):
+            if self.click_rect.collidepoint(mouse_pos):
                 self.scrubbing = True
         
         # Only called if progress bar is clicked initially
@@ -315,10 +321,20 @@ class ProgressBar:
         if not pygame.mouse.get_pressed()[0] == 1 and self.first_click_occurred:
             self.first_click_occurred = False
 
+    # Applies alpha values to hidden click box that provides extra space to click the progress bar
+    def draw_click_box(self, alpha = 0):
+        click_surf = pygame.Surface(pygame.Rect(self.click_rect).size, pygame.SRCALPHA)
+        click_surf.set_alpha(alpha)
+        pygame.draw.rect(click_surf, (0, 255, 0), click_surf.get_rect())
+        self.screen.blit(click_surf, self.click_rect)
+
     # Renders background bar and progress bar to the screen
     def draw(self) -> None:
         # Renders background rectangle behind progress rectangle
         pygame.draw.rect(self.screen, self.back_color, self.back_rect)
+        
+        # Renders invisible rectangle around rectangle around progress bar to make collision space more comfortable for touchscreen
+        self.draw_click_box()  # Pass 255 as parameter to see invisible box
 
         # Only increases bar if song is actively playing
         if self.increment != 0 and not self.paused and not self.scrubbing:
