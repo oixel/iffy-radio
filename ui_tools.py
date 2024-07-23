@@ -4,7 +4,7 @@ from mutagen.mp3 import MP3
 from io import BytesIO
 from time import time
 
-#
+# Handles the basic flat color background
 class Background:
     def __init__(self, screen, color, position = (0, 0)) -> None:
         self.screen = screen
@@ -203,8 +203,6 @@ class ProgressBar:
         self.position = position
 
         # Sets initial values for variables used in incrementation and scrubbing
-        self.song_length = 0
-        self.song_position = 0
         self.increment = 0
         self.paused = False
         self.first_click_occurred = False
@@ -229,6 +227,16 @@ class ProgressBar:
         self.progress_color = progress_color
         self.progress_rect.left = self.back_rect.left
         self.progress_rect.centery = self.back_rect.centery
+
+        # Creates text objects for displaying current time and song length next to progress bar
+        GAP = 20
+        TIME_FONT_SIZE = 16
+
+        sp_pos = (position[0] - (BAR_SIZE[0] / 2) - GAP, position[1])
+        self.song_pos_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), sp_pos)
+
+        sl_pos = (position[0] + (BAR_SIZE[0] / 2) + GAP, position[1])
+        self.song_length_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), sl_pos)
     
     # Resetting the epoch ensures all incrementations occur on top of any alterations (pausing or scrubbing)
     # Basically, ensures time is synced from the point after a pause or after scrubbing through the song
@@ -254,7 +262,6 @@ class ProgressBar:
     # Resets start time to current time and calculates the new increment for each second
     def reset(self, song_length) -> None:
         # Calculate increment by dividing background rect's width / seconds of song
-        self.song_length = song_length
         self.epoch = time()
         self.increment = self.back_rect.width / song_length
         
@@ -263,6 +270,10 @@ class ProgressBar:
 
         # Reset stored width, since new song has not been altered in any way
         self.stored_width = 0
+
+        # Changes song length text to display the length of new song
+        song_length_str = self.get_time_string(song_length)
+        self.song_length_text.change_text(song_length_str)
 
     # Makes the bar's right side move to the right as the song goes on
     def increment_bar(self) -> None:
@@ -325,6 +336,31 @@ class ProgressBar:
         if not pygame.mouse.get_pressed()[0] == 1 and self.first_click_occurred:
             self.first_click_occurred = False
 
+    # Converts passed in time (representing seconds) into a string properly formatted to 0:00
+    def get_time_string(self, time) -> None:
+        # Calculates minutes and seconds of time passed
+        minutes = str(round(time // 60))
+        seconds = round(time % 60)
+
+        # Adds a zero to front of seconds if it is not double digits
+        seconds = f"0{seconds}" if seconds < 10 else str(seconds)
+
+        # Returns properly formatted string
+        return f"{minutes}:{seconds}"
+    
+    # Only updates time text when progress has been made in the song
+    def draw_song_pos(self) -> None:
+        # Creates time text from current position in the song
+        song_position = self.progress_rect.width / self.increment
+        time_text = self.get_time_string(song_position)
+
+        # Only changes time text if it has made progress since last frame
+        if time_text != self.song_pos_text.text:
+            self.song_pos_text.change_text(time_text)
+        
+        # Renders time text to screen on the left side of the progress bar
+        self.song_pos_text.draw()
+
     # Applies alpha values to hidden click box that provides extra space to click the progress bar
     def draw_click_box(self, alpha = 0):
         click_surface = pygame.Surface(pygame.Rect(self.click_rect).size, pygame.SRCALPHA)
@@ -334,8 +370,9 @@ class ProgressBar:
 
     # Renders background bar and progress bar to the screen
     def draw(self) -> None:
-        self.song_position = self.progress_rect.width / self.increment
-        self.print_times()
+        # Renders the text displaying current time and song length next to progress bar
+        self.draw_song_pos()
+        self.song_length_text.draw()
 
         # Renders background rectangle behind progress rectangle
         pygame.draw.rect(self.screen, self.back_color, self.back_rect)
@@ -352,17 +389,3 @@ class ProgressBar:
 
         # Handles functionality for scrubbing through song by clicking progress bar
         self.handle_scrubbing()
-    
-    # TEMPORARY
-    def print_times(self) -> None:
-        cur_pos = self.song_position
-        cur_times = (round(cur_pos // 60), round(cur_pos % 60))
-        zero_1 = "0" if cur_times[1] < 10 else ""
-        time_passed = f"{cur_times[0]}:{zero_1}{cur_times[1]}"
-
-        total = self.song_length
-        end_times = (round(total // 60), round(total % 60))
-        zero_2 = "0" if end_times[1] < 10 else ""
-        end_time = f"{end_times[0]}:{zero_2}{end_times[1]}"
-
-        print(f"{time_passed} / {end_time}")
