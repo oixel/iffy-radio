@@ -1,7 +1,7 @@
 # Only works on raspberry pi
 
 import RPi.GPIO as GPIO
-from SimpleMFRC522 import SimpleMFRC522 as MFRC
+from mfrc522 import SimpleMFRC522 as MFRC
 
 def write_rfid() -> None:
     writer = MFRC()
