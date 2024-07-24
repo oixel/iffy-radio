@@ -136,7 +136,13 @@ def load_song() -> None:
 # 
 def previous() -> None:
     global track_num
-    track_num = len(queue) - 1 if track_num == 0 else track_num - 1
+    
+    RESET_TIME = 4
+
+    # Resets song to start unless button had been pressed in the last few seconds
+    if song_info.get_time() < RESET_TIME:
+        track_num = len(queue) - 1 if track_num == 0 else track_num - 1
+    
     load_song()
     
 # 
