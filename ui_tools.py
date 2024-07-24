@@ -3,6 +3,7 @@ from mutagen.id3 import ID3
 from mutagen.mp3 import MP3
 from io import BytesIO
 from time import time
+from math import floor
 
 # Handles the basic flat color background
 class Background:
@@ -232,17 +233,25 @@ class ProgressBar:
         GAP = 20
         TIME_FONT_SIZE = 16
 
-        sp_pos = (position[0] - (BAR_SIZE[0] / 2) - GAP, position[1])
-        self.song_pos_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), sp_pos)
+        et_pos = (position[0] - (BAR_SIZE[0] / 2) - GAP, position[1])
+        self.elapsed_time_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), et_pos)
 
         sl_pos = (position[0] + (BAR_SIZE[0] / 2) + GAP, position[1])
         self.song_length_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), sl_pos)
     
+        self.stored_time = 0
+        self.progressed_time = 0
+
     # Resetting the epoch ensures all incrementations occur on top of any alterations (pausing or scrubbing)
     # Basically, ensures time is synced from the point after a pause or after scrubbing through the song
     def reset_epoch(self) -> None:
         self.epoch = time()
         self.stored_width = self.progress_rect.width
+
+    # Since increment is calculated by diving the max width by the length of the song,
+    # Dividing the current width essentially returns the current elapsed time.
+    def calculate_time(self) -> float:
+        return self.progress_rect.width / self.increment
 
     # Toggles paused state of progress bar and ensures time spent paused does not get added to total time
     def change_pause(self, paused) -> None:
@@ -251,6 +260,8 @@ class ProgressBar:
         
         # If now paused, change progress bar's color to reflect it
         if paused:
+            self.stored_time = self.calculate_time()
+            self.progressed_time = 0
             self.progress_color = self.paused_color
         else:  # Otherwise, if just unpaused
             # Reset epoch and update stored width
@@ -271,6 +282,9 @@ class ProgressBar:
         # Reset stored width, since new song has not been altered in any way
         self.stored_width = 0
 
+        self.stored_time = 0
+        self.progressed_time = 0
+
         # Changes song length text to display the length of new song
         song_length_str = self.get_time_string(song_length)
         self.song_length_text.change_text(song_length_str)
@@ -279,6 +293,7 @@ class ProgressBar:
     def increment_bar(self) -> None:
         # Increments the progress bar every second while playing
         seconds = time() - self.epoch
+        self.progressed_time = seconds
         self.progress_rect.width = self.stored_width + (self.increment * seconds)
 
         # Resets progress bar's left side to left of background bar so only the right side moves
@@ -297,6 +312,7 @@ class ProgressBar:
             # If progress bar was clicked on the first frame that mouse was pressed down, then it is clicked
             if self.click_rect.collidepoint(mouse_pos):
                 self.scrubbing = True
+                self.progressed_time = 0
         
         # Only called if progress bar is clicked initially
         if self.scrubbing:
@@ -319,6 +335,8 @@ class ProgressBar:
             self.progress_rect.left = self.back_rect.left
             self.progress_rect.centery = self.back_rect.centery
 
+            # Updates the elapsed time text as the progress bar is scrubbed
+            self.stored_time = self.calculate_time()
 
             # Updates song position only when mouse is released
             if not pygame.mouse.get_pressed()[0] == 1:
@@ -326,7 +344,7 @@ class ProgressBar:
                 self.reset_epoch()
 
                 # Calculates the new position in song (in format of seconds) and sets it in the player
-                song_position = self.progress_rect.width / self.increment      
+                song_position = self.calculate_time()
                 pygame.mixer.music.set_pos(song_position)
 
                 # Resets states back to normal
@@ -339,8 +357,8 @@ class ProgressBar:
     # Converts passed in time (representing seconds) into a string properly formatted to 0:00
     def get_time_string(self, time) -> None:
         # Calculates minutes and seconds of time passed
-        minutes = str(round(time // 60))
-        seconds = round(time % 60)
+        minutes = str(floor(time // 60))
+        seconds = floor(time % 60)
 
         # Adds a zero to front of seconds if it is not double digits
         seconds = f"0{seconds}" if seconds < 10 else str(seconds)
@@ -349,16 +367,15 @@ class ProgressBar:
         return f"{minutes}:{seconds}"
     
     # Only updates time text when progress has been made in the song
-    def update_song_position(self) -> None:
+    def update_elapsed_time(self) -> None:
         # Creates time text from current position in the song
-        song_position = self.progress_rect.width / self.increment
-        time_text = self.get_time_string(song_position)
+        elapsed_time = self.stored_time + self.progressed_time
+        time_text = self.get_time_string(elapsed_time)
 
         # Only changes time text if it has made progress since last frame
-        if time_text != self.song_pos_text.text:
-            self.song_pos_text.change_text(time_text)
+        if time_text != self.elapsed_time_text.text:
+            self.elapsed_time_text.change_text(time_text)
         
-
     # Applies alpha values to hidden click box that provides extra space to click the progress bar
     def draw_click_box(self, alpha = 0):
         click_surface = pygame.Surface(pygame.Rect(self.click_rect).size, pygame.SRCALPHA)
@@ -368,8 +385,8 @@ class ProgressBar:
 
     # Renders background bar and progress bar to the screen
     def draw(self) -> None:
-        # Updates the song_pos_text to reflect the position of time in the song
-        self.update_song_position()
+        # Updates the elapsed_time_text to reflect the position of time in the song
+        self.update_elapsed_time()
 
         # Only increases bar if song is actively playing
         if self.increment != 0 and not self.paused and not self.scrubbing:
@@ -385,7 +402,7 @@ class ProgressBar:
         pygame.draw.rect(self.screen, self.progress_color, self.progress_rect)
 
         # Renders the text displaying current time and song length next to progress bar
-        self.song_pos_text.draw()
+        self.elapsed_time_text.draw()
         self.song_length_text.draw()
 
         # Handles functionality for scrubbing through song by clicking progress bar
