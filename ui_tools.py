@@ -182,6 +182,10 @@ class SongInfo:
     def change_pause(self, paused) -> None:
         self.progress_bar.change_pause(paused)
 
+    # Returns the elapsed time stored in the progress bar
+    def get_time(self) -> float:
+        return self.progress_bar.elapsed_time
+
     # Renders song information onto screen
     def draw(self) -> None:
         self.screen.blit(self.cover_image, self.rect)
