@@ -350,9 +350,8 @@ class ProgressBar:
                 # Reset epoch and update stored width
                 self.reset_epoch()
 
-                # Calculates the new position in song (in format of seconds) and sets it in the player
-                song_position = self.calculate_time()
-                pygame.mixer.music.set_pos(song_position)
+                # Sets position in the song to the last scrubbed position
+                pygame.mixer.music.set_pos(self.stored_time)
 
                 # Resets states back to normal
                 self.scrubbing = False
