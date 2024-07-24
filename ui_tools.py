@@ -349,7 +349,7 @@ class ProgressBar:
         return f"{minutes}:{seconds}"
     
     # Only updates time text when progress has been made in the song
-    def draw_song_pos(self) -> None:
+    def update_song_position(self) -> None:
         # Creates time text from current position in the song
         song_position = self.progress_rect.width / self.increment
         time_text = self.get_time_string(song_position)
@@ -358,8 +358,6 @@ class ProgressBar:
         if time_text != self.song_pos_text.text:
             self.song_pos_text.change_text(time_text)
         
-        # Renders time text to screen on the left side of the progress bar
-        self.song_pos_text.draw()
 
     # Applies alpha values to hidden click box that provides extra space to click the progress bar
     def draw_click_box(self, alpha = 0):
@@ -370,22 +368,25 @@ class ProgressBar:
 
     # Renders background bar and progress bar to the screen
     def draw(self) -> None:
-        # Renders the text displaying current time and song length next to progress bar
-        self.draw_song_pos()
-        self.song_length_text.draw()
+        # Updates the song_pos_text to reflect the position of time in the song
+        self.update_song_position()
 
+        # Only increases bar if song is actively playing
+        if self.increment != 0 and not self.paused and not self.scrubbing:
+            self.increment_bar()
+            
         # Renders background rectangle behind progress rectangle
         pygame.draw.rect(self.screen, self.back_color, self.back_rect)
         
         # Renders invisible rectangle around rectangle around progress bar to make collision space more comfortable for touchscreen
         self.draw_click_box()  # Pass 255 as parameter to see invisible box
 
-        # Only increases bar if song is actively playing
-        if self.increment != 0 and not self.paused and not self.scrubbing:
-            self.increment_bar()
-        
         # Renders progress rectangle to screen
         pygame.draw.rect(self.screen, self.progress_color, self.progress_rect)
+
+        # Renders the text displaying current time and song length next to progress bar
+        self.song_pos_text.draw()
+        self.song_length_text.draw()
 
         # Handles functionality for scrubbing through song by clicking progress bar
         self.handle_scrubbing()
