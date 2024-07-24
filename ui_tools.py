@@ -189,6 +189,7 @@ class SongInfo:
         self.song_text.draw()
         self.progress_bar.draw()
 
+# Handles progress bar rendering, scrubbing functionality, and tracking elapsed time
 class ProgressBar:
     def __init__(self, screen, position) -> None:
         # Initializes default attributes of progress bar
@@ -213,6 +214,11 @@ class ProgressBar:
         # In order to increment from it rather than the progress bar's start width of 0
         self.stored_width = 0  
 
+        # Variables that keep track of the time passed
+        self.stored_time = 0  # Stores the time of last alteration (pause or scrub)
+        self.progressed_time = 0  # Stores the time that has passed since last alteration
+        self.elapsed_time = 0  # Stores sum of both
+
         # Creates background rectangle at center of screen, under cover art
         self.back_rect = pygame.Rect((0, 0), BAR_SIZE)
         self.back_color = back_color
@@ -233,14 +239,13 @@ class ProgressBar:
         GAP = 20
         TIME_FONT_SIZE = 16
 
+        # Elapsed time text is the text on the left of the bar that shows how much time has passed since the start
         et_pos = (position[0] - (BAR_SIZE[0] / 2) - GAP, position[1])
         self.elapsed_time_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), et_pos)
 
+        # Song length text is the text on the right of the bar that shows the max length of the song
         sl_pos = (position[0] + (BAR_SIZE[0] / 2) + GAP, position[1])
         self.song_length_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), sl_pos)
-    
-        self.stored_time = 0
-        self.progressed_time = 0
 
     # Resetting the epoch ensures all incrementations occur on top of any alterations (pausing or scrubbing)
     # Basically, ensures time is synced from the point after a pause or after scrubbing through the song
@@ -260,7 +265,7 @@ class ProgressBar:
         
         # If now paused, change progress bar's color to reflect it
         if paused:
-            self.stored_time = self.calculate_time()
+            self.stored_time += self.progressed_time
             self.progressed_time = 0
             self.progress_color = self.paused_color
         else:  # Otherwise, if just unpaused
@@ -282,6 +287,7 @@ class ProgressBar:
         # Reset stored width, since new song has not been altered in any way
         self.stored_width = 0
 
+        # Resets the variables storing time since a new song starts at 0
         self.stored_time = 0
         self.progressed_time = 0
 
@@ -291,10 +297,11 @@ class ProgressBar:
 
     # Makes the bar's right side move to the right as the song goes on
     def increment_bar(self) -> None:
-        # Increments the progress bar every second while playing
-        seconds = time() - self.epoch
-        self.progressed_time = seconds
-        self.progress_rect.width = self.stored_width + (self.increment * seconds)
+        # Updates progressed time to reflect how much time has passed since last stored time position
+        self.progressed_time = time() - self.epoch
+
+        # Increments the progress bar based on how much time has passed in the song
+        self.progress_rect.width = self.elapsed_time * self.increment
 
         # Resets progress bar's left side to left of background bar so only the right side moves
         self.progress_rect.left = self.back_rect.left
@@ -366,11 +373,11 @@ class ProgressBar:
         # Returns properly formatted string
         return f"{minutes}:{seconds}"
     
-    # Only updates time text when progress has been made in the song
+    # Updates total elapsed time and only changes text when progress has been made in the song
     def update_elapsed_time(self) -> None:
         # Creates time text from current position in the song
-        elapsed_time = self.stored_time + self.progressed_time
-        time_text = self.get_time_string(elapsed_time)
+        self.elapsed_time = self.stored_time + self.progressed_time
+        time_text = self.get_time_string(self.elapsed_time)
 
         # Only changes time text if it has made progress since last frame
         if time_text != self.elapsed_time_text.text:
