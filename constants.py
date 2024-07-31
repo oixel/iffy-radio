@@ -17,6 +17,7 @@ from downloader import *
 
 # Default dimensions of touchscreen
 SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
+WINDOW_NAME = 'iffy radio'
 
 # URL that is inputted when start button is pressed on Windows OS
 DEFAULT_TEST_URL = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
@@ -37,11 +38,18 @@ BASIC_FONT_PATH = "assets/fonts/NotoSansRegular.ttf"
 SONG_INFO_FONT_PATH = "assets/fonts/NotoSansRegular.ttf"
 TIMER_FONT_PATH = "assets/fonts/ChivoMono.ttf"
 
+# Variables that stores text that doesn't get changed over time
+START_TEXT = "Press Button to Start"
+TAP_REQUEST_TEXT = "Tap playlist card!"
+VERIFYING_TEXT = "Verifying playlist..."
+CHECKING_TEXT = "Now checking for new songs.."
+ERROR_TEXT = "ERROR SONG COULDN'T DOWNLOAD"
+
 # Variables relating to font attributes
 ARTIST_FONT_SIZE = 16
-ARTIST_FONT_COLOR = (255, 255, 255)
+ARTIST_FONT_COLOR = (0, 0, 0)
 SONG_FONT_SIZE = 24
-SONG_FONT_COLOR = (255, 255, 255)
+SONG_FONT_COLOR = (0, 0, 0)
 TIME_FONT_SIZE = 16
 TIME_FONT_COLOR = (0, 0, 0)
 
