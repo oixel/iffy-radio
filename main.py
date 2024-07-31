@@ -1,5 +1,6 @@
 import pygame.freetype
 import os
+from platform import system
 from pytubefix import Playlist
 import random
 from ui_tools import *
@@ -11,9 +12,15 @@ SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 
 #
 def start() -> None:
-    #playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKfQPvxeElX4HktVjDFLIgXs"
-    playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
-    
+    # 
+    if is_windows:
+        playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
+    else:
+        start_text.change_text("Tap playlist card!")
+        render([background, start_text])
+        playlist_url = f"https://www.youtube.com/playlist?list={read_rfid()}"
+
+    #
     start_text.change_text("Verifying playlist...")
     render([background, start_text])
 
@@ -25,7 +32,7 @@ def start() -> None:
         start()
 
     # 
-    start_text.change_text(f"Now checking for new songs..")
+    start_text.change_text("Now checking for new songs..")
     render([background, start_text])
     
     # 
@@ -39,7 +46,7 @@ def start() -> None:
 
         if not os.path.isfile(f"songs/{file_name}.mp3"):
             not_downloaded.append(url)
-
+    
     #
     global queue
     queue = start_queue.copy()
@@ -107,7 +114,7 @@ def exit() -> None:
     global is_running
     is_running = False
 
-#
+# 
 def shuffle() -> None:
     global start_queue, queue, track_num
 
@@ -169,7 +176,21 @@ if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
     pygame.init()
     pygame.display.set_caption('iffy radio')
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    #
+    is_windows = system() == "Windows"
+
+    #
+    if is_windows:
+        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    else:
+        from rfid_rw import read_rfid
+
+        # Sets display to full screen
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+        # Hides cursor on start up
+        pygame.mouse.set_visible(False)
 
     # Tracks state to render proper UI elements
     state = 0
@@ -219,10 +240,10 @@ if __name__ == "__main__":
                     is_running = False
 
         if state == 1 and initial_state:
-            #
+            # 
             background.change_color('#d184a1')
-            
-            #
+
+            # 
             song_info.change_song(queue[0])
 
             # 
@@ -236,5 +257,5 @@ if __name__ == "__main__":
                 skip()
 
             render(player_ui)
-
+    
     pygame.quit()
