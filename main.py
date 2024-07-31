@@ -7,14 +7,14 @@ def start() -> None:
         playlist_url = DEFAULT_TEST_URL
     else:
         # Resets text back to requesting RFID card
-        start_text.change_text("Tap playlist card!")
+        start_text.change_text(TAP_REQUEST_TEXT)
         render([background, start_text])
 
         # Loads data in RFID into playlist URL when card is tapped
         playlist_url = f"https://www.youtube.com/playlist?list={read_rfid()}"
 
     # Updates text to reflect current activity
-    start_text.change_text("Verifying playlist...")
+    start_text.change_text(VERIFYING_TEXT)
     render([background, start_text])
 
     # Checks if playlist actually exists, if not, calls function again to request another card
@@ -25,7 +25,7 @@ def start() -> None:
         start()
 
     # Updates text to reflect current activity
-    start_text.change_text("Now checking for new songs..")
+    start_text.change_text(CHECKING_TEXT)
     render([background, start_text])
     
     # Creates list to track the URLs that need to be downloaded from
@@ -63,7 +63,7 @@ def start() -> None:
 
             # Renders error message if song failed to download
             if download_song(song_url, "", "songs/", file_name) == False:
-                status_text.change_text(f"ERROR SONG COULDN'T DOWNLOAD")
+                status_text.change_text(ERROR_TEXT)
                 continue
             
             # Writes any found song metadata to the downloaded MP3 
@@ -111,7 +111,7 @@ def back() -> None:
 
     # Resets background and text on screen to their initial states
     background.change_color(START_BG_COLOR)
-    start_text.change_text("Press Button to Start")
+    start_text.change_text(START_TEXT)
     render(start_ui)
 
 # Toggles the shuffle of the rest of the queue and ensures current song is left unaltered
@@ -174,7 +174,7 @@ def toggle_pause() -> None:
 if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
     pygame.init()
-    pygame.display.set_caption('iffy radio')
+    pygame.display.set_caption(WINDOW_NAME)
     
     # Uses full screen and enables RFID checker when not using Windows
     is_windows = system() == "Windows"
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     background = Background(screen, START_BG_COLOR)
 
     # UI Elements in start state
-    start_text = Text(screen, BASIC_FONT_PATH, 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
+    start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, (255, 255, 255), (mid_x, mid_y - 35))
     start_button = Button(screen, start, (mid_x, mid_y + 35), REG_IMG_PATH, PRESSED_IMG_PATH)
     exit_button = Button(screen, exit, (0, 0), REG_IMG_PATH, PRESSED_IMG_PATH)
     start_ui = [background, start_text, start_button, exit_button]
