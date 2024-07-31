@@ -226,12 +226,12 @@ class ProgressBar:
         self.progress_rect.centery = self.back_rect.centery
 
         # Elapsed time text is the text on the left of the bar that shows how much time has passed since the start
-        et_pos = (position[0] - (BAR_SIZE[0] / 2) - GAP, position[1] - TIMER_Y_OFFSET)
-        self.elapsed_time_text = Text(screen, TIMER_FONT_PATH, TIME_FONT_SIZE, "0:00", (0, 0, 0), et_pos)
+        et_pos = (position[0] - (BAR_SIZE[0] / 2) - GAP, position[1] - TIME_Y_OFFSET)
+        self.elapsed_time_text = Text(screen, TIMER_FONT_PATH, TIME_FONT_SIZE, "0:00", TIME_FONT_COLOR, et_pos)
 
         # Song length text is the text on the right of the bar that shows the max length of the song
-        sl_pos = (position[0] + (BAR_SIZE[0] / 2) + GAP, position[1] - TIMER_Y_OFFSET)
-        self.song_length_text = Text(screen, TIMER_FONT_PATH, TIME_FONT_SIZE, "0:00", (0, 0, 0), sl_pos)
+        sl_pos = (position[0] + (BAR_SIZE[0] / 2) + GAP, position[1] - TIME_Y_OFFSET)
+        self.song_length_text = Text(screen, TIMER_FONT_PATH, TIME_FONT_SIZE, "0:00", TIME_FONT_COLOR, sl_pos)
 
     # Resetting the epoch ensures all incrementations occur on top of any alterations (pausing or scrubbing)
     # Basically, ensures time is synced from the point after a pause or after scrubbing through the song
