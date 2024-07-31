@@ -1,20 +1,10 @@
-import pygame.freetype
-import os
-from platform import system
-from pytubefix import Playlist
-import random
 from ui_tools import *
-from data_handler import *
-from downloader import *
-
-# Default dimensions of touchscreen
-SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 
 # Handles loading playlist and downloading non-downloaded songs
 def start() -> None:
     # Only utilizes RFID reading on Raspberry Pi
     if is_windows:
-        playlist_url = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
+        playlist_url = DEFAULT_TEST_URL
     else:
         # Resets text back to requesting RFID card
         start_text.change_text("Tap playlist card!")
@@ -90,7 +80,7 @@ def start() -> None:
     state = 1
 
     # Changes rendered background color and updates the displayed metadata to be the first song in queue
-    background.change_color('#d184a1')
+    background.change_color(PLAYER_BG_COLOR)
     song_info.change_song(queue[track_num])
 
     # Starts first song in queue!
@@ -120,7 +110,7 @@ def back() -> None:
     pygame.mixer.quit()
 
     # Resets background and text on screen to their initial states
-    background.change_color((0, 0, 0))
+    background.change_color(START_BG_COLOR)
     start_text.change_text("Press Button to Start")
     render(start_ui)
 
@@ -154,9 +144,6 @@ def load_song() -> None:
 # Resets song or plays previous song (or last song in queue if the queue's beginning has been reached)
 def previous() -> None:
     global track_num
-
-    # Any elapsed time greater than this variable resets the current song rather than playing the previous song
-    RESET_TIME = 4
 
     # Resets song to start unless button had been pressed in the last few seconds
     if song_info.get_time() < RESET_TIME:
@@ -192,7 +179,7 @@ if __name__ == "__main__":
     # Uses full screen and enables RFID checker when not using Windows
     is_windows = system() == "Windows"
     if is_windows:
-        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        screen = pygame.display.set_mode(SCREEN_SIZE)
     else:
         from rfid_rw import read_rfid
 
@@ -213,28 +200,26 @@ if __name__ == "__main__":
 
     # Basic variables for test UI
     mid_x, mid_y = screen.get_rect().center
-    reg_img_path = 'assets/textures/test_button.png'
-    pressed_img_path = 'assets/textures/test_button_pressed.png'
-
+    
     # Creates a colored background that fills the entire screen
-    background = Background(screen, (0, 0, 0))
+    background = Background(screen, START_BG_COLOR)
 
     # UI Elements in start state
-    start_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
-    start_button = Button(screen, start, (mid_x, mid_y + 35), reg_img_path, pressed_img_path)
-    exit_button = Button(screen, exit, (0, 0), reg_img_path, pressed_img_path)
+    start_text = Text(screen, BASIC_FONT_PATH, 24, "Press Button to Start", (255, 255, 255), (mid_x, mid_y - 35))
+    start_button = Button(screen, start, (mid_x, mid_y + 35), REG_IMG_PATH, PRESSED_IMG_PATH)
+    exit_button = Button(screen, exit, (0, 0), REG_IMG_PATH, PRESSED_IMG_PATH)
     start_ui = [background, start_text, start_button, exit_button]
 
     # UI Elements in status state
-    status_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, "", (255, 255, 255), (mid_x, mid_y + 35))
+    status_text = Text(screen, BASIC_FONT_PATH, 24, "", (255, 255, 255), (mid_x, mid_y + 35))
     
     # UI Elements in main state
     song_info = SongInfo(screen, (mid_x, mid_y - 60))
-    previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), reg_img_path, pressed_img_path)
-    skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), reg_img_path, pressed_img_path)
-    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), reg_img_path, pressed_img_path)
-    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), reg_img_path, pressed_img_path)
-    back_button = Button(screen, back, (0, 0), reg_img_path, pressed_img_path)
+    previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), REG_IMG_PATH, PRESSED_IMG_PATH)
+    skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), REG_IMG_PATH, PRESSED_IMG_PATH)
+    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), REG_IMG_PATH, PRESSED_IMG_PATH)
+    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), REG_IMG_PATH, PRESSED_IMG_PATH)
+    back_button = Button(screen, back, (0, 0), REG_IMG_PATH, PRESSED_IMG_PATH)
     player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
 
     # Ensures loop runs from start

@@ -1,9 +1,4 @@
-import pygame
-from mutagen.id3 import ID3
-from mutagen.mp3 import MP3
-from io import BytesIO
-from time import time
-from math import floor
+from constants import *
 
 # Handles the basic flat color background
 class Background:
@@ -136,11 +131,11 @@ class SongInfo:
         
         # Initializes text stating artist's name
         artist_text_pos = (position[0], position[1] - 125)
-        self.artist_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 16, self.artist, (255, 255, 255), artist_text_pos)
+        self.artist_text = Text(screen, SONG_INFO_FONT_PATH, ARTIST_FONT_SIZE, self.artist, ARTIST_FONT_COLOR, artist_text_pos)
 
         # Intiailizes text stating song's name
         song_text_pos = (position[0], position[1] - 100)
-        self.song_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", 24, self.song, (255, 255, 255), song_text_pos)
+        self.song_text = Text(screen, SONG_INFO_FONT_PATH, SONG_FONT_SIZE, self.song, SONG_FONT_COLOR, song_text_pos)
 
         # Initializes progress bar
         self.progress_bar = ProgressBar(screen, (position[0], position[1] + 85))
@@ -196,14 +191,6 @@ class SongInfo:
 # Handles progress bar rendering, scrubbing functionality, and tracking elapsed time
 class ProgressBar:
     def __init__(self, screen, position) -> None:
-        # Initializes default attributes of progress bar
-        BAR_SIZE = (200, 10)
-        CLICK_SAFETY = 20
-        back_color = (0, 0, 0)
-        self.playing_color = (255, 0, 0, 0)
-        self.paused_color = (90, 90, 90)
-        progress_color = self.playing_color
-
         # Stores basic variables depending on parameters
         self.screen = screen
         self.position = position
@@ -225,7 +212,6 @@ class ProgressBar:
 
         # Creates background rectangle at center of screen, under cover art
         self.back_rect = pygame.Rect((0, 0), BAR_SIZE)
-        self.back_color = back_color
         self.back_rect.center = position
 
         # Creates invisible rectangle that makes clicking progress bar more comfortable on the small touch screen
@@ -235,21 +221,17 @@ class ProgressBar:
 
         # Initializes progress rectangle with the same height as the background rectangle
         self.progress_rect = pygame.Rect((0, 0), (0, BAR_SIZE[1]))
-        self.progress_color = progress_color
+        self.progress_color = BAR_PLAYING_COLOR
         self.progress_rect.left = self.back_rect.left
         self.progress_rect.centery = self.back_rect.centery
 
-        # Creates text objects for displaying current time and song length next to progress bar
-        GAP = 20
-        TIME_FONT_SIZE = 16
-
         # Elapsed time text is the text on the left of the bar that shows how much time has passed since the start
-        et_pos = (position[0] - (BAR_SIZE[0] / 2) - GAP, position[1])
-        self.elapsed_time_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), et_pos)
+        et_pos = (position[0] - (BAR_SIZE[0] / 2) - GAP, position[1] - TIMER_Y_OFFSET)
+        self.elapsed_time_text = Text(screen, TIMER_FONT_PATH, TIME_FONT_SIZE, "0:00", (0, 0, 0), et_pos)
 
         # Song length text is the text on the right of the bar that shows the max length of the song
-        sl_pos = (position[0] + (BAR_SIZE[0] / 2) + GAP, position[1])
-        self.song_length_text = Text(screen, "assets/fonts/NotoSansRegular.ttf", TIME_FONT_SIZE, "0:00", (0, 0, 0), sl_pos)
+        sl_pos = (position[0] + (BAR_SIZE[0] / 2) + GAP, position[1] - TIMER_Y_OFFSET)
+        self.song_length_text = Text(screen, TIMER_FONT_PATH, TIME_FONT_SIZE, "0:00", (0, 0, 0), sl_pos)
 
     # Resetting the epoch ensures all incrementations occur on top of any alterations (pausing or scrubbing)
     # Basically, ensures time is synced from the point after a pause or after scrubbing through the song
@@ -271,13 +253,13 @@ class ProgressBar:
         if paused:
             self.stored_time += self.progressed_time
             self.progressed_time = 0
-            self.progress_color = self.paused_color
+            self.progress_color = BAR_PAUSED_COLOR
         else:  # Otherwise, if just unpaused
             # Reset epoch and update stored width
             self.reset_epoch()
 
             # Change progress bar's color to reflect playing
-            self.progress_color = self.playing_color
+            self.progress_color = BAR_PLAYING_COLOR
 
     # Resets start time to current time and calculates the new increment for each second
     def reset(self, song_length) -> None:
@@ -403,7 +385,7 @@ class ProgressBar:
             self.increment_bar()
             
         # Renders background rectangle behind progress rectangle
-        pygame.draw.rect(self.screen, self.back_color, self.back_rect)
+        pygame.draw.rect(self.screen, BAR_BG_COLOR, self.back_rect)
         
         # Renders invisible rectangle around rectangle around progress bar to make collision space more comfortable for touchscreen
         self.draw_click_box()  # Pass 255 as parameter to see invisible box
