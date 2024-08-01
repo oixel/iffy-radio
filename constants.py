@@ -27,7 +27,7 @@ RESET_TIME = 4
 
 # Constants relating to colored background
 START_BG_PATH = "assets/backgrounds/test.png"
-PLAYER_DEFAULT_BG_PATH = "assets/backgrounds/road.png"
+DEFAULT_BG_PATH = "assets/backgrounds/road.png"
 START_BG_COLOR = (0, 0, 0)
 PLAYER_BG_COLOR = '#d184a1'
 
