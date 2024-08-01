@@ -46,4 +46,5 @@ if __name__ == "__main__":
         print("Tap tag to paste data into!")
         writer = MFRC()
         writer.write(data)
+        GPIO.cleanup()
         
