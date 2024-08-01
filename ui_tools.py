@@ -2,15 +2,18 @@ from constants import *
 
 # Handles the custom image backgrounds
 class Background:
+    # Creates an image as a surface and stores it for blitting in draw function
     def __init__(self, screen, path, position = (0, 0)) -> None:
         self.screen = screen
         self.position = position
 
         self.surface = pygame.image.load(path).convert()
 
+    # Changes the image that is used as surface to the new image at path
     def change_image(self, path) -> None:
         self.surface = pygame.image.load(path).convert()
 
+    # Renders image background onto screen
     def draw(self) -> None:
         self.screen.blit(self.surface, self.position)
 
