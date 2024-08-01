@@ -17,7 +17,6 @@ class Background:
     def draw(self) -> None:
         self.screen.blit(self.surface, self.position)
 
-
 # Handles creation of text objects
 class Text:
     def __init__(self, screen, font_path, size, text, color, position) -> None:
