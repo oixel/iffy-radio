@@ -2,6 +2,7 @@
 
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522 as MFRC
+from time import sleep
 
 def write_rfid() -> None:
     writer = MFRC()
@@ -38,6 +39,9 @@ if __name__ == "__main__":
     elif int(choice) == 3:
         print("Tap tag to copy data from!")
         data = read_rfid()
+
+        print("Wait 3 seconds (Please untap copied card)")
+        sleep(3)
 
         print("Tap tag to paste data into!")
         writer = MFRC()
