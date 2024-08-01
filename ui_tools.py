@@ -1,18 +1,15 @@
 from constants import *
 
-# Handles the basic flat color background
+# Handles the custom image backgrounds
 class Background:
     def __init__(self, screen, path, position = (0, 0)) -> None:
         self.screen = screen
         self.position = position
 
-        #self.surface = pygame.Surface(screen.get_size())
-        #self.surface.fill(pygame.Color(color))
-
         self.surface = pygame.image.load(path).convert()
 
-    def change_color(self, color) -> None:
-        self.surface.fill(pygame.Color(color))
+    def change_image(self, path) -> None:
+        self.surface = pygame.image.load(path).convert()
 
     def draw(self) -> None:
         self.screen.blit(self.surface, self.position)
@@ -54,11 +51,11 @@ class Button:
         self.screen = screen
         
         # Loads unpressed variant of button's image
-        self.regular_image = pygame.image.load(image_path).convert_alpha()
+        self.regular_image = pygame.image.load(image_path).convert()
         
         # Loads pressed variant of button's image (if one exists)
         if pressed_image_path != None:
-            self.pressed_image = pygame.image.load(pressed_image_path).convert_alpha()
+            self.pressed_image = pygame.image.load(pressed_image_path).convert()
 
         # Sets button's current image to its unpressed variant
         self.image = self.regular_image

@@ -80,7 +80,7 @@ def start() -> None:
     state = 1
 
     # Changes rendered background color and updates the displayed metadata to be the first song in queue
-    background.change_color(PLAYER_BG_COLOR)
+    background.change_image(PLAYER_DEFAULT_BG_PATH)
     song_info.change_song(queue[track_num])
 
     # Starts first song in queue!
@@ -110,7 +110,7 @@ def back() -> None:
     pygame.mixer.quit()
 
     # Resets background and text on screen to their initial states
-    background.change_color(START_BG_COLOR)
+    background.change_image(START_BG_PATH)
     start_text.change_text(START_TEXT)
     render(start_ui)
 
@@ -202,7 +202,7 @@ if __name__ == "__main__":
     mid_x, mid_y = screen.get_rect().center
     
     # Creates a colored background that fills the entire screen
-    background = Background(screen, TEST_BG_PATH)
+    background = Background(screen, START_BG_PATH)
 
     # UI Elements in start state
     start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, (255, 255, 255), (mid_x, mid_y - 35))

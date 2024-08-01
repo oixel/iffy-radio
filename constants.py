@@ -26,7 +26,8 @@ DEFAULT_TEST_URL = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC7
 RESET_TIME = 4
 
 # Constants relating to colored background
-TEST_BG_PATH = "assets/backgrounds/test.png"
+START_BG_PATH = "assets/backgrounds/test.png"
+PLAYER_DEFAULT_BG_PATH = "assets/backgrounds/test.png"
 START_BG_COLOR = (0, 0, 0)
 PLAYER_BG_COLOR = '#d184a1'
 
