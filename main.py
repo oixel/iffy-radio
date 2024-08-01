@@ -202,7 +202,7 @@ if __name__ == "__main__":
     mid_x, mid_y = screen.get_rect().center
     
     # Creates a colored background that fills the entire screen
-    background = Background(screen, START_BG_COLOR)
+    background = Background(screen, TEST_BG_PATH)
 
     # UI Elements in start state
     start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, (255, 255, 255), (mid_x, mid_y - 35))

@@ -2,12 +2,14 @@ from constants import *
 
 # Handles the basic flat color background
 class Background:
-    def __init__(self, screen, color, position = (0, 0)) -> None:
+    def __init__(self, screen, path, position = (0, 0)) -> None:
         self.screen = screen
         self.position = position
 
-        self.surface = pygame.Surface(screen.get_size())
-        self.surface.fill(pygame.Color(color))
+        #self.surface = pygame.Surface(screen.get_size())
+        #self.surface.fill(pygame.Color(color))
+
+        self.surface = pygame.image.load(path).convert()
 
     def change_color(self, color) -> None:
         self.surface.fill(pygame.Color(color))
