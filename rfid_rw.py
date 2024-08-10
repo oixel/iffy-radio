@@ -13,10 +13,8 @@ def write_rfid(data = None) -> None:
 
         if "https://www.youtube.com/playlist?list=" in data:
             data = data[38:]
-
-        print("Tap your RFID tag!")
+        
         writer.write(data)
-        print("Written to tag!")
     finally:
         GPIO.cleanup()
 
@@ -30,14 +28,16 @@ def read_rfid() -> str:
         return text
 
 if __name__ == "__main__":
-    data_to_activate = "PL2fTbjKYTzKd5jOUFCP-vNaQWsTvfXhwc"
+    data_to_activate = None
 
     if data_to_activate != None:
+        print("Tap card to activate!")
         write_rfid(data_to_activate)
         print("Card activated!")
     else:
         choice = input("What do you desire? 1 = Write, 2 = Read, 3 = Copy Data\n")
         if int(choice) == 1:
+            print("Tap your RFID tag!")
             write_rfid()
             print("Data written!")
         elif int(choice) == 2:
