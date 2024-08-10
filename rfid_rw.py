@@ -28,7 +28,7 @@ def read_rfid() -> str:
         return text
 
 if __name__ == "__main__":
-    data_to_activate = None
+    data_to_activate = "PL2fTbjKYTzKd5jOUFCP-vNaQWsTvfXhwc"
 
     if data_to_activate != None:
         print("Tap card to activate!")
