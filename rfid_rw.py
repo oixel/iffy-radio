@@ -4,11 +4,12 @@ import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522 as MFRC
 from time import sleep
 
-def write_rfid() -> None:
+def write_rfid(data = None) -> None:
     writer = MFRC()
 
     try:
-        data = input("What is the new data?\n")
+        if data == None:
+            data = input("What is the new data?\n")
 
         if "https://www.youtube.com/playlist?list=" in data:
             data = data[38:]
@@ -29,22 +30,28 @@ def read_rfid() -> str:
         return text
 
 if __name__ == "__main__":
-    choice = input("What do you desire? 1 = Write, 2 = Read, 3 = Copy Data\n")
-    if int(choice) == 1:
-        write_rfid()
-        print("Data written!")
-    elif int(choice) == 2:
-        print("Tap tag!")
-        print(read_rfid())
-    elif int(choice) == 3:
-        print("Tap tag to copy data from!")
-        data = read_rfid()
+    data_to_activate = "PL2fTbjKYTzKd5jOUFCP-vNaQWsTvfXhwc"
 
-        print("Wait 3 seconds (Please untap copied card)")
-        sleep(3)
+    if data_to_activate != None:
+        write_rfid(data_to_activate)
+        print("Card activated!")
+    else:
+        choice = input("What do you desire? 1 = Write, 2 = Read, 3 = Copy Data\n")
+        if int(choice) == 1:
+            write_rfid()
+            print("Data written!")
+        elif int(choice) == 2:
+            print("Tap tag!")
+            print(read_rfid())
+        elif int(choice) == 3:
+            print("Tap tag to copy data from!")
+            data = read_rfid()
 
-        print("Tap tag to paste data into!")
-        writer = MFRC()
-        writer.write(data)
-        GPIO.cleanup()
-        
+            print("Wait 3 seconds (Please untap copied card)")
+            sleep(3)
+
+            print("Tap tag to paste data into!")
+            writer = MFRC()
+            writer.write(data)
+            GPIO.cleanup()
+            
