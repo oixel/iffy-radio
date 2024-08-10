@@ -4,8 +4,7 @@ from ui_tools import *
 def start() -> None:
     # Only utilizes RFID reading on Raspberry Pi
     if is_windows:
-        playlist_url = DEFAULT_TEST_URL
-        bg_path = DEFAULT_BG_PATH
+        data = "PL2fTbjKYTzKd5jOUFCP-vNaQWsTvfXhwc"
     else:
         # Resets text back to requesting RFID card
         start_text.change_text(TAP_REQUEST_TEXT)
@@ -14,18 +13,17 @@ def start() -> None:
         # Loads data in RFID into playlist URL when card is tapped
         data = read_rfid()
 
-        # Grabs custom background image name if stored in RFID card
-        if " " in data:
-            split = data.split(" ")
-            url = split[0]
-            bg_path = f"assets/backgrounds/{split[1]}.png"
-        else:
-            url = data
-            bg_path = DEFAULT_BG_PATH
+    # Grabs custom background image name if one is written in data
+    if " " in data:
+        split = data.split(" ")
+        url = split[0]
+        bg_path = f"assets/backgrounds/{split[1]}.png"
+    else:
+        url = data
+        bg_path = DEFAULT_BG_PATH
 
-        playlist_url = f"https://www.youtube.com/playlist?list={url}"
+    playlist_url = f"https://www.youtube.com/playlist?list={url}"
         
-
     # Updates text to reflect current activity
     start_text.change_text(VERIFYING_TEXT)
     render([background, start_text])
