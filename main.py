@@ -174,10 +174,10 @@ def toggle_pause() -> None:
 
     if paused:
         pygame.mixer.music.unpause()
-        pause_button.change_sprites("pause_button", "pause_button_pressed")
+        pause_button.change_sprites("pause", "pause_pressed")
     else:
         pygame.mixer.music.pause()
-        pause_button.change_sprites("play_button", "play_button_pressed")
+        pause_button.change_sprites("play", "play_pressed")
 
     paused = not paused
 
@@ -230,9 +230,9 @@ if __name__ == "__main__":
     song_info = SongInfo(screen, (mid_x, mid_y - 60))
     previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), REG_IMG_NAME, PRESSED_IMG_NAME)
     skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), REG_IMG_NAME, PRESSED_IMG_NAME)
-    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), "pause_button", "pause_button_pressed")
+    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), "pause", "pause_pressed")
     shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), REG_IMG_NAME, PRESSED_IMG_NAME)
-    back_button = Button(screen, back, (32, 32), "back_button", "back_button_pressed")
+    back_button = Button(screen, back, (32, 32), "back", "back_pressed")
     player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
 
     # Ensures loop runs from start
