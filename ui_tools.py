@@ -48,16 +48,16 @@ class Text:
 
 # Handles buttons in menus with rendering their different images and pressing functionality
 class Button:
-    def __init__(self, screen, function, position, image_path, pressed_image_path=None):
+    def __init__(self, screen, function, position, sprite_name, pressed_sprite_name=None):
         # Stores screen for reference in draw()
         self.screen = screen
         
         # Loads unpressed variant of button's image
-        self.regular_image = pygame.image.load(image_path).convert()
+        self.regular_image = pygame.image.load(f"assets/textures/{sprite_name}.png").convert_alpha()
         
         # Loads pressed variant of button's image (if one exists)
-        if pressed_image_path != None:
-            self.pressed_image = pygame.image.load(pressed_image_path).convert()
+        if pressed_sprite_name != None:
+            self.pressed_image = pygame.image.load(f"assets/textures/{pressed_sprite_name}.png").convert_alpha()
 
         # Sets button's current image to its unpressed variant
         self.image = self.regular_image
@@ -74,7 +74,15 @@ class Button:
         # Clicked is only set true if the button is clicked on the first frame of the mouse button being pressed
         self.clicked = False
         self.first_click_occurred = False
-        
+    
+    # Changes regular and pressed sprites to what is passed in parameters
+    def change_sprites(self, sprite_name, pressed_sprite_name):
+        # Loads unpressed variant of button's image
+        self.regular_image = pygame.image.load(f"assets/textures/{sprite_name}.png").convert_alpha()
+
+        # Loads pressed variant of button's image
+        self.pressed_image = pygame.image.load(f"assets/textures/{pressed_sprite_name}.png").convert_alpha()
+
     # Draws button onto the screen and handles function calling on button press
     def draw(self) -> None:
         mouse_pos = pygame.mouse.get_pos()

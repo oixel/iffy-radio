@@ -4,7 +4,7 @@ from ui_tools import *
 def start() -> None:
     # Only utilizes RFID reading on Raspberry Pi
     if is_windows:
-        data = "PL2fTbjKYTzKd5jOUFCP-vNaQWsTvfXhwc"
+        data = "PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
     else:
         # Resets text back to requesting RFID card
         start_text.change_text(TAP_REQUEST_TEXT)
@@ -174,8 +174,10 @@ def toggle_pause() -> None:
 
     if paused:
         pygame.mixer.music.unpause()
+        pause_button.change_sprites("pause_button", "pause_button_pressed")
     else:
         pygame.mixer.music.pause()
+        pause_button.change_sprites("play_button", "play_button_pressed")
 
     paused = not paused
 
@@ -217,8 +219,8 @@ if __name__ == "__main__":
 
     # UI Elements in start state
     start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, (255, 255, 255), (mid_x, mid_y - 35))
-    start_button = Button(screen, start, (mid_x, mid_y + 35), REG_IMG_PATH, PRESSED_IMG_PATH)
-    exit_button = Button(screen, exit, (0, 0), REG_IMG_PATH, PRESSED_IMG_PATH)
+    start_button = Button(screen, start, (mid_x, mid_y + 35), REG_IMG_NAME, PRESSED_IMG_NAME)
+    exit_button = Button(screen, exit, (0, 0), REG_IMG_NAME, PRESSED_IMG_NAME)
     start_ui = [background, start_text, start_button, exit_button]
 
     # UI Elements in status state
@@ -226,11 +228,11 @@ if __name__ == "__main__":
     
     # UI Elements in main state
     song_info = SongInfo(screen, (mid_x, mid_y - 60))
-    previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), REG_IMG_PATH, PRESSED_IMG_PATH)
-    skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), REG_IMG_PATH, PRESSED_IMG_PATH)
-    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), REG_IMG_PATH, PRESSED_IMG_PATH)
-    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), REG_IMG_PATH, PRESSED_IMG_PATH)
-    back_button = Button(screen, back, (0, 0), REG_IMG_PATH, PRESSED_IMG_PATH)
+    previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), REG_IMG_NAME, PRESSED_IMG_NAME)
+    skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), REG_IMG_NAME, PRESSED_IMG_NAME)
+    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), "pause_button", "pause_button_pressed")
+    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), REG_IMG_NAME, PRESSED_IMG_NAME)
+    back_button = Button(screen, back, (0, 0), REG_IMG_NAME, PRESSED_IMG_NAME)
     player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
 
     # Ensures loop runs from start
