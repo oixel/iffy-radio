@@ -66,13 +66,6 @@ class DataHandler:
     def set_filler(self) -> None:
         # Gets YouTube video's basic information utilizing pytube in downloader.py
         song = get_song(self.url)
-
-        # If no album cover art is available, set cover to custom made starcat filler image
-        if self.metadata["cover_src"] == None:
-            self.metadata["cover_src"] = "https://i.ibb.co/DDKn0JH/starcat.jpg"
-
-            # NOTE: Uncomment to utilize video's thumbnail instead of awesome starcat image
-            # self.metadata["cover_src"] = song.thumbnail_url
         
         # If no song title is available, set title to YouTube video's title
         if self.metadata["title"] == None:
@@ -137,9 +130,13 @@ class DataHandler:
         audio.save(f"{path}{file_name}.mp3")
 
         
-        # Reads and store byte data for album cover image from image source's URL
-        cont = requests.get(self.metadata['cover_src']).content
-        image_bytes = BytesIO(cont).read()
+        # Reads and store byte data for album cover image from image source's URL (if one exists)
+        if self.metadata['cover_src'] != None:
+            cont = requests.get(self.metadata['cover_src']).content
+            image_bytes = BytesIO(cont).read()
+        else:
+            with open("assets/default.jpg", "rb") as img:
+                image_bytes = img.read()
 
         # Creates an ID3 object for current song (EasyID3 does not support embedding album art)
         id3 = ID3(f"{path}{file_name}.mp3")
