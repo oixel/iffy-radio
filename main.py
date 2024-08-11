@@ -14,14 +14,19 @@ def start() -> None:
         data = read_rfid()
 
     # Grabs custom background image name if one is written in data
-    if " " in data:
-        split = data.split(" ")
+    if DATA_SEPERATOR in data:
+        split = data.split(DATA_SEPERATOR)
         url = split[0]
         bg_path = f"assets/backgrounds/{split[1]}.png"
+
+        # Prevents non-existent backgrounds from being used
+        if not os.path.isfile(bg_path) or DATA_SEPERATOR not in data:
+            bg_path = DEFAULT_BG_PATH
     else:
         url = data
         bg_path = DEFAULT_BG_PATH
 
+    # Fills out the rest of the playlist's URL
     playlist_url = f"https://www.youtube.com/playlist?list={url}"
         
     # Updates text to reflect current activity
