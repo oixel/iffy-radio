@@ -19,8 +19,8 @@ from downloader import *
 SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 WINDOW_NAME = 'iffy radio'
 
-# URL that is inputted when start button is pressed on Windows OS
-DEFAULT_TEST_URL = "https://www.youtube.com/playlist?list=PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
+# Data that is read when start button is pressed on Windows OS
+DEFAULT_TEST_DATA = "PL2fTbjKYTzKd-lCQfahnWHg_QMFyVAeq5"
 
 # Any elapsed time greater than this variable resets the current song rather than playing the previous song
 RESET_TIME = 4

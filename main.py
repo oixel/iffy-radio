@@ -4,7 +4,7 @@ from ui_tools import *
 def start() -> None:
     # Only utilizes RFID reading on Raspberry Pi
     if is_windows:
-        data = "PL2fTbjKYTzKcb4w0rhNC76L-MER585BJa"
+        data = DEFAULT_TEST_DATA
     else:
         # Resets text back to requesting RFID card
         start_text.change_text(TAP_REQUEST_TEXT)
