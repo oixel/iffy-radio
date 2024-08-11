@@ -30,8 +30,8 @@ START_BG_PATH = "assets/backgrounds/test.png"
 DEFAULT_BG_PATH = "assets/backgrounds/freight.png"
 
 # Paths for test button UI
-REG_IMG_PATH = 'assets/textures/test_button.png'
-PRESSED_IMG_PATH = 'assets/textures/test_button_pressed.png'
+REG_IMG_NAME= 'test_button'
+PRESSED_IMG_NAME = 'test_button_pressed'
 
 # Paths to different fonts in assets
 BASIC_FONT_PATH = "assets/fonts/NotoSansRegular.ttf"
