@@ -135,12 +135,16 @@ def shuffle() -> None:
 
         # Places position in queue to wherever the currently playing song was just moved to
         track_num = queue.index(start_queue[track_num])
+
+        shuffle_button.change_sprites("shuffle_on", "shuffle_on_pressed")
     else:  # Otherwise, unshuffle
         # Places position in queue back to currently playing song's regular position in playlist
         track_num = start_queue.index(queue[track_num])
 
         # Resets queue to its initial state when it was first loaded
         queue = start_queue.copy()
+
+        shuffle_button.change_sprites("shuffle_off", "shuffle_off_pressed")
 
 # Updates song info and loads new song into music player
 def load_song() -> None:
@@ -218,8 +222,8 @@ if __name__ == "__main__":
     background = Background(screen, START_BG_PATH)
 
     # UI Elements in start state
-    start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, (255, 255, 255), (mid_x, mid_y - 35))
-    start_button = Button(screen, start, (mid_x, mid_y + 35), REG_IMG_NAME, PRESSED_IMG_NAME)
+    start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, (255, 255, 255), (mid_x, mid_y - 15))
+    start_button = Button(screen, start, (mid_x, mid_y + 35), "start", "start_pressed")
     exit_button = Button(screen, exit, (32, 32), "exit", "exit_pressed")
     start_ui = [background, start_text, start_button, exit_button]
 
@@ -231,7 +235,7 @@ if __name__ == "__main__":
     previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), "previous", "previous_pressed")
     skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), "skip", "skip_pressed")
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 70), "pause", "pause_pressed")
-    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), REG_IMG_NAME, PRESSED_IMG_NAME)
+    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 140), "shuffle_off", "shuffle_off_pressed")
     back_button = Button(screen, back, (32, 32), "back", "back_pressed")
     player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
 
