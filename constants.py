@@ -21,9 +21,11 @@ WINDOW_NAME = 'iffy radio'
 
 # Data that is read when start button is pressed on Windows OS
 DEFAULT_TEST_DATA = "PL2fTbjKYTzKd5jOUFCP-vNaQWsTvfXhwc"
-
 # Any elapsed time greater than this variable resets the current song rather than playing the previous song
 RESET_TIME = 4
+
+# String that seperates URL from background name in data
+DATA_SEPERATOR = "::"
 
 # Constants relating to custom image backgrounds
 START_BG_PATH = "assets/backgrounds/test.png"
