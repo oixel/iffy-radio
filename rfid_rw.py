@@ -14,8 +14,8 @@ def write_rfid(data = None) -> None:
         if "https://www.youtube.com/playlist?list=" in data:
             data = data[38:]
         
-        print("Tap your RFID tag!\n")
-        
+        print("Tap your RFID tag!")
+
         writer.write(data)
     finally:
         GPIO.cleanup()
