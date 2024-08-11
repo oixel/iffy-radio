@@ -220,7 +220,7 @@ if __name__ == "__main__":
     # UI Elements in start state
     start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, (255, 255, 255), (mid_x, mid_y - 35))
     start_button = Button(screen, start, (mid_x, mid_y + 35), REG_IMG_NAME, PRESSED_IMG_NAME)
-    exit_button = Button(screen, exit, (0, 0), REG_IMG_NAME, PRESSED_IMG_NAME)
+    exit_button = Button(screen, exit, (32, 32), "exit", "exit_pressed")
     start_ui = [background, start_text, start_button, exit_button]
 
     # UI Elements in status state
