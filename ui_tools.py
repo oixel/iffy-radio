@@ -55,9 +55,6 @@ class Button:
         # Sets button's sprites
         self.change_sprites(sprite_name, pressed_sprite_name)
 
-        # Sets button's current image to its unpressed variant
-        self.image = self.regular_image
-
         # Creates a rect from the loaded image
         self.rect = self.image.get_rect()
 
@@ -78,6 +75,9 @@ class Button:
         
         # Loads pressed variant of button's image
         self.pressed_image = pygame.image.load(f"assets/textures/{pressed_sprite_name}.png").convert_alpha()
+
+        # Sets button's current image to its unpressed variant
+        self.image = self.regular_image
 
     # Draws button onto the screen and handles function calling on button press
     def draw(self) -> None:

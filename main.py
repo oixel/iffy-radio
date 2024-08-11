@@ -113,21 +113,27 @@ def render(to_render) -> None:
 
 # Goes back to start menu from player menu
 def back() -> None:
-    global state, start_queue, queue, track_num
+    global state, start_queue, queue, track_num, paused
 
     # Resets all values of queue
     state = 0
     start_queue = [] 
     queue = []
     track_num = 0
+    paused = False
 
     # Stops the music and closes the player
     pygame.mixer.music.stop()
     pygame.mixer.quit()
 
+    # Resets states of buttons with different variations
+    pause_button.change_sprites("pause", "pause_pressed")
+    shuffle_button.change_sprites("shuffle_off", "shuffle_off_pressed")
+    
     # Resets background and text on screen to their initial states
     background.change_image(START_BG_PATH)
     start_text.change_text(START_TEXT)
+
     render(start_ui)
 
 # Toggles the shuffle of the rest of the queue and ensures current song is left unaltered
@@ -243,7 +249,7 @@ if __name__ == "__main__":
     shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 140), "shuffle_off", "shuffle_off_pressed")
     back_button = Button(screen, back, (32, 32), "back", "back_pressed")
     player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
-
+    
     # Ensures loop runs from start
     is_running = True
     while is_running:
