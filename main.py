@@ -228,9 +228,9 @@ if __name__ == "__main__":
     
     # UI Elements in main state
     song_info = SongInfo(screen, (mid_x, mid_y - 60))
-    previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), REG_IMG_NAME, PRESSED_IMG_NAME)
-    skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), REG_IMG_NAME, PRESSED_IMG_NAME)
-    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), "pause", "pause_pressed")
+    previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), "previous", "previous_pressed")
+    skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), "skip", "skip_pressed")
+    pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 70), "pause", "pause_pressed")
     shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), REG_IMG_NAME, PRESSED_IMG_NAME)
     back_button = Button(screen, back, (32, 32), "back", "back_pressed")
     player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
