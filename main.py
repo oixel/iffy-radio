@@ -232,7 +232,7 @@ if __name__ == "__main__":
     skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), REG_IMG_NAME, PRESSED_IMG_NAME)
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 130), "pause_button", "pause_button_pressed")
     shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 200), REG_IMG_NAME, PRESSED_IMG_NAME)
-    back_button = Button(screen, back, (0, 0), REG_IMG_NAME, PRESSED_IMG_NAME)
+    back_button = Button(screen, back, (32, 32), "back_button", "back_button_pressed")
     player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
 
     # Ensures loop runs from start
