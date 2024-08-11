@@ -20,7 +20,7 @@ SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = 800, 480
 WINDOW_NAME = 'iffy radio'
 
 # Data that is read when start button is pressed on Windows OS
-DEFAULT_TEST_DATA = "PL2fTbjKYTzKd-lCQfahnWHg_QMFyVAeq5"
+DEFAULT_TEST_DATA = "PL2fTbjKYTzKd5jOUFCP-vNaQWsTvfXhwc"
 
 # Any elapsed time greater than this variable resets the current song rather than playing the previous song
 RESET_TIME = 4
