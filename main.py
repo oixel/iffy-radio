@@ -116,7 +116,7 @@ def render(to_render) -> None:
 
 # Goes back to start menu from player menu
 def back() -> None:
-    global state, start_queue, queue, track_num, paused
+    global state, start_queue, queue, track_num, paused, looping
 
     # Resets all values of queue
     state = 0
@@ -124,6 +124,7 @@ def back() -> None:
     queue = []
     track_num = 0
     paused = False
+    looping = False
 
     # Stops the music and closes the player
     pygame.mixer.music.stop()
@@ -132,6 +133,7 @@ def back() -> None:
     # Resets states of buttons with different variations
     pause_button.change_sprites("pause", "pause_pressed")
     shuffle_button.change_sprites("shuffle_off", "shuffle_off_pressed")
+    loop_button.change_sprites("loop_off", "loop_off_pressed")
     
     # Resets background and text on screen to their initial states
     background.change_image(START_BG_PATH)
@@ -187,9 +189,13 @@ def previous() -> None:
     load_song()
     
 # Skips to next song in queue (or first song if the queue's end has been reached)
-def skip() -> None:
+def skip(skip_pressed = True) -> None:
     global track_num
-    track_num = 0 if track_num == len(queue) - 1 else track_num + 1
+
+    # If looping is toggled on for current song, replay it if the song ended naturally (skip button wasn't pressed)
+    if (not looping and not skip_pressed) or skip_pressed:
+        track_num = 0 if track_num == len(queue) - 1 else track_num + 1
+
     load_song()
 
 # Toggles pause on music depending on its current state
@@ -207,6 +213,18 @@ def toggle_pause() -> None:
 
     # Updates paused state of progress bar
     song_info.change_pause(paused)
+
+# Toggles looping of current track depending on its current state
+def toggle_looping():
+    global looping
+
+    # Stops looping current song
+    if looping:
+        loop_button.change_sprites("loop_off", "loop_off_pressed")
+    else:
+        loop_button.change_sprites("loop_on", "loop_on_pressed")
+
+    looping = not looping
 
 if __name__ == "__main__":
     # Creates a fullscreen window named "iffy radio"
@@ -234,6 +252,7 @@ if __name__ == "__main__":
     queue = []  # Stores current queue (shuffled or not)
     track_num = 0
     paused = False
+    looping = False
 
     # Basic variables for test UI
     mid_x, mid_y = screen.get_rect().center
@@ -255,10 +274,11 @@ if __name__ == "__main__":
     previous_button = Button(screen, previous, (mid_x - 75, mid_y + 70), "previous", "previous_pressed")
     skip_button = Button(screen, skip, (mid_x + 75, mid_y + 70), "skip", "skip_pressed")
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 70), "pause", "pause_pressed")
-    shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 140), "shuffle_off", "shuffle_off_pressed")
+    loop_button = Button(screen, toggle_looping, (mid_x - 36, mid_y + 140), "loop_off", "loop_off_pressed")
+    shuffle_button = Button(screen, shuffle, (mid_x + 36, mid_y + 140), "shuffle_off", "shuffle_off_pressed")
     back_button = Button(screen, back, (32, 32), "back", "back_pressed")
     queue_pos_text = Text(screen, BASIC_FONT_PATH, 24, "0 / 0", BASIC_FONT_COLOR, (SCREEN_WIDTH - 48, SCREEN_HEIGHT - 32))
-    player_ui = [background, song_info, queue_pos_text, previous_button, skip_button, pause_button, shuffle_button, back_button]
+    player_ui = [background, song_info, queue_pos_text, previous_button, skip_button, pause_button, loop_button, shuffle_button, back_button]
     
     # Ensures loop runs from start
     is_running = True
@@ -278,7 +298,7 @@ if __name__ == "__main__":
         elif state == 1:
             # If the song is not paused and not playing anymore, then the song is over
             if not paused and not pygame.mixer.music.get_busy():
-                skip()
+                skip(False)  # Passes in false since the skip button wasn't pressed
 
             # Renders player UI
             render(player_ui)
