@@ -99,6 +99,9 @@ def start() -> None:
     background.change_image(bg_path)
     song_info.change_song(queue[track_num])
 
+    # Updates the displayed position in queue
+    queue_pos_text.change_text(f"{track_num + 1} / {len(queue)}")
+
     # Starts first song in queue!
     pygame.mixer.init()
     pygame.mixer.music.load(queue[track_num])
@@ -156,10 +159,16 @@ def shuffle() -> None:
         queue = start_queue.copy()
 
         shuffle_button.change_sprites("shuffle_off", "shuffle_off_pressed")
+    
+    # Updates displayed position to reflect the current track's new position in altered queue
+    queue_pos_text.change_text(f"{track_num + 1} / {len(queue)}")
 
 # Updates song info and loads new song into music player
 def load_song() -> None:
     song_info.change_song(queue[track_num])
+
+    # Updates position displayed in text to reflect change
+    queue_pos_text.change_text(f"{track_num + 1} / {len(queue)}")
 
     pygame.mixer.music.load(queue[track_num])
     pygame.mixer.music.play()
@@ -233,13 +242,13 @@ if __name__ == "__main__":
     background = Background(screen, START_BG_PATH)
 
     # UI Elements in start state
-    start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, (255, 255, 255), (mid_x, mid_y - 15))
+    start_text = Text(screen, BASIC_FONT_PATH, 24, START_TEXT, BASIC_FONT_COLOR, (mid_x, mid_y - 15))
     start_button = Button(screen, start, (mid_x, mid_y + 35), "start", "start_pressed")
     exit_button = Button(screen, exit, (32, 32), "exit", "exit_pressed")
     start_ui = [background, start_text, start_button, exit_button]
 
     # UI Elements in status state
-    status_text = Text(screen, BASIC_FONT_PATH, 24, "", (255, 255, 255), (mid_x, mid_y + 35))
+    status_text = Text(screen, BASIC_FONT_PATH, 24, "", BASIC_FONT_COLOR, (mid_x, mid_y + 35))
     
     # UI Elements in main state
     song_info = SongInfo(screen, (mid_x, mid_y - 60))
@@ -248,7 +257,8 @@ if __name__ == "__main__":
     pause_button = Button(screen, toggle_pause, (mid_x, mid_y + 70), "pause", "pause_pressed")
     shuffle_button = Button(screen, shuffle, (mid_x, mid_y + 140), "shuffle_off", "shuffle_off_pressed")
     back_button = Button(screen, back, (32, 32), "back", "back_pressed")
-    player_ui = [background, song_info, previous_button, skip_button, pause_button, shuffle_button, back_button]
+    queue_pos_text = Text(screen, BASIC_FONT_PATH, 24, "0 / 0", BASIC_FONT_COLOR, (SCREEN_WIDTH - 48, SCREEN_HEIGHT - 32))
+    player_ui = [background, song_info, queue_pos_text, previous_button, skip_button, pause_button, shuffle_button, back_button]
     
     # Ensures loop runs from start
     is_running = True
