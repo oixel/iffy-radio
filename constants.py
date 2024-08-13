@@ -48,6 +48,7 @@ CHECKING_TEXT = "Now checking for new songs.."
 ERROR_TEXT = "ERROR SONG COULDN'T DOWNLOAD"
 
 # Constants relating to font attributes
+BASIC_FONT_COLOR = (0, 0, 0)
 ARTIST_FONT_SIZE = 16
 ARTIST_FONT_COLOR = (0, 0, 0)
 SONG_FONT_SIZE = 24
