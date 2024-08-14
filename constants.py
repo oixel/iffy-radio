@@ -29,7 +29,7 @@ RESET_TIME = 4
 DATA_SEPERATOR = "::"
 
 # Constants relating to custom image backgrounds
-START_BG_PATH = "assets/backgrounds/test.png"
+START_BG_PATH = "assets/backgrounds/start.png"
 DEFAULT_BG_PATH = "assets/backgrounds/freight.png"
 
 # Paths for test button UI
