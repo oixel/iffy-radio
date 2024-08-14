@@ -172,11 +172,13 @@ class SongInfo:
         image = pygame.image.load(image).convert_alpha()
         self.cover_image = pygame.transform.scale(image, self.IMAGE_SIZE)
         self.rect = self.cover_image.get_rect()
-        self.rect.center =  self.position
+        self.rect.center =  (self.position[0], self.position[1] - 5)
 
         # Updates song info to new song
         self.artist_text.change_text(self.artist)
-        self.song_text.change_text(self.song)
+
+        song_name = f"{self.song[:SONG_CHAR_LIMIT]}..." if len(self.song) > SONG_CHAR_LIMIT else self.song
+        self.song_text.change_text(song_name)
 
     # Changes paused state of progress bar when pause button is pressed
     def change_pause(self, paused) -> None:
